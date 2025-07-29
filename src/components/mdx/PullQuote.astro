@@ -1,0 +1,26 @@
+---
+// Cita destacada (Pull Quote) estilo revista
+// Uso en MDX:
+// <PullQuote author="— El Silencio de Roraima">
+//   "La montaña no habla a quienes gritan..."
+// </PullQuote>
+interface Props {
+  author?: string;
+  class?: string;
+}
+const { author, class: className = "" } = Astro.props;
+---
+
+<blockquote
+  class={`my-16 md:my-24 mx-auto max-w-3xl text-center ${className}`}
+>
+  <div class="text-4xl md:text-5xl lg:text-6xl font-light italic leading-tight" style="font-family: 'Source Serif 4', serif; color: #1a1a1a;">
+    <span class="text-6xl md:text-7xl leading-none" style="color: #A31621; font-family: 'Bebas Neue', sans-serif;">"</span>
+    <slot />
+  </div>
+  {author && (
+    <cite class="block mt-8 text-xs md:text-sm uppercase tracking-[0.25em] not-italic text-gray-400">
+      {author}
+    </cite>
+  )}
+</blockquote>

@@ -1,0 +1,55 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PostBlock from "./PostBlock.astro";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2">
+  <div class="col-span-1 p-2">
+    <ul class="grid grid-cols-1 md:grid-cols-2">
+      {
+        posts.slice(1).map(
+          (post, index) =>
+            index % 2 == 0 && (
+              <li class="col-span-1 md:col-span-2 p-2 md:p-3">
+                <PostBlock
+                  postId={post.id}
+                  img={post.data.heroImage}
+                  title={post.data.title}
+                  description={post.data.description}
+                  pubDate={post.data.pubDate}
+                  author={post.data.author}
+                />
+              </li>
+            )
+        )
+      }
+    </ul>
+  </div>
+  <div class="col-span-1 p-2">
+    <ul class="grid grid-cols-1 md:grid-cols-2">
+      {
+        posts.slice(1).map(
+          (post, index) =>
+            index % 2 !== 0 && (
+              <li class="col-span-1 md:col-span-2 p-2 md:p-3">
+                <PostBlock
+                  postId={post.id}
+                  img={post.data.heroImage}
+                  title={post.data.title}
+                  description={post.data.description}
+                  pubDate={post.data.pubDate}
+                  author={post.data.author}
+                />
+              </li>
+            )
+        )
+      }
+    </ul>
+  </div>
+</div>

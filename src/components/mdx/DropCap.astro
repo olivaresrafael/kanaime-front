@@ -1,0 +1,17 @@
+---
+// Letra capitular (Drop Cap) para el primer párrafo de un artículo
+// Uso en MDX: <DropCap>R</DropCap>esto es el resto del párrafo...
+interface Props {
+  letter?: string;
+  class?: string;
+}
+const { letter, class: className = "" } = Astro.props;
+---
+
+<span
+  class={`float-left leading-none font-bold mr-3 mt-1 select-none ${className}`}
+  style="font-family: 'Bebas Neue', sans-serif; font-size: 4.2em; line-height: 0.75; color: #A31621;"
+  aria-hidden="true"
+>
+  <slot>{letter}</slot>
+</span>

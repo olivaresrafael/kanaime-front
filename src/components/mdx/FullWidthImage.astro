@@ -1,0 +1,30 @@
+---
+// Imagen a ancho completo con caption opcional
+// Uso en MDX:
+// <FullWidthImage
+//   src="../../assets/blog-placeholder-3.jpg"
+//   caption="Descripción de la imagen"
+//   alt="Texto alternativo"
+// />
+interface Props {
+  src: string;
+  caption?: string;
+  alt?: string;
+  class?: string;
+}
+const { src, caption, alt = "", class: className = "" } = Astro.props;
+---
+
+<figure class={`my-12 md:my-20 ${className}`}>
+  <img
+    src={src}
+    alt={alt || caption || "Imagen del artículo"}
+    class="w-full h-auto object-cover"
+    loading="lazy"
+  />
+  {caption && (
+    <figcaption class="mt-4 text-xs uppercase tracking-[0.2em] text-gray-400 text-center">
+      {caption}
+    </figcaption>
+  )}
+</figure>

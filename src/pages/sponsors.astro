@@ -1,0 +1,71 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SponsorCard from "../components/SponsorCard.astro";
+import Divider from "../components/Divider.astro";
+import { SITE_TITLE } from "../consts";
+
+const description = "Descubre a los aliados de Kanaimé: marcas y organizaciones comprometidas con la naturaleza, la exploración y la cultura venezolana.";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead title={`Aliados — ${SITE_TITLE}`} description={description} />
+    <SchemaOrg
+      schema={{
+        type: "breadcrumb",
+        items: [
+          { name: "Inicio", url: "/" },
+          { name: "Aliados", url: "/sponsors/" },
+        ],
+      }}
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="container mx-auto px-4 md:px-8 py-12 md:py-20">
+      <h1 class="text-6xl md:text-9xl font-bold mb-6 bebas-neue-regular text-center">
+        ALIADOS
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-600 text-center max-w-2xl mx-auto mb-16 source-serif-4-font">
+        Marcas y organizaciones que comparten nuestra pasión por la naturaleza, la exploración y el conocimiento.
+      </p>
+      <Divider className="mb-16" />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <SponsorCard
+          name="eko.red"
+          description="Plataforma digital dedicada a la sostenibilidad, el medio ambiente y las comunidades. Conectando personas con el planeta."
+          url="https://eko.red"
+          category="Medio Ambiente"
+        />
+        <SponsorCard
+          name="Tu Marca"
+          description="Espacio reservado para futuros aliados que compartan nuestra visión de conservación y exploración."
+          category="Próximamente"
+        />
+        <SponsorCard
+          name="Tu Organización"
+          description="¿Tienes una marca o proyecto alineado con Kanaimé? Contáctanos para explorar alianzas."
+          category="Próximamente"
+        />
+      </div>
+
+      <div class="mt-20 text-center">
+        <p class="text-lg text-gray-500 source-serif-4-font mb-4">
+          ¿Interesado en ser parte de Kanaimé?
+        </p>
+        <a
+          href="mailto:contacto@kanaime.com"
+          class="inline-block text-xl uppercase tracking-widest border-2 border-black px-8 py-4 hover:bg-black hover:text-white transition-colors duration-300"
+        >
+          Escríbenos
+        </a>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,81 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import { SITE_TITLE } from "../consts";
+import Divider from "./Divider.astro";
+---
+
+<header>
+  <nav>
+    <h2 class="text-8xl font-bold text-right pt-10 pb-6">
+      <a href="/">{SITE_TITLE}</a>
+    </h2>
+    <div class="internal-links">
+      <HeaderLink href="/tags/naturaleza">naturaleza</HeaderLink>
+      <HeaderLink href="/tags/exploracion">exploración</HeaderLink>
+      <HeaderLink href="/tags/cultura">cultura</HeaderLink>
+      <HeaderLink href="/tags/fotografia">fotografía</HeaderLink>
+      <HeaderLink href="/tags/perfiles">perfiles</HeaderLink>
+    </div>
+    <div class="internal-links">
+      <HeaderLink href="/">Home</HeaderLink>
+      <HeaderLink href="/autores">Autores</HeaderLink>
+      <HeaderLink href="/sponsors">Sponsors</HeaderLink>
+      <HeaderLink href="/about">About</HeaderLink>
+    </div>
+  </nav>
+  <Divider className="mx-[50px]" />
+</header>
+
+<style>
+  header {
+    margin: 0;
+    background: white;
+  }
+
+  h2 a,
+  h2 a.active {
+    text-decoration: none;
+    padding-left: 0 !important;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5em;
+    margin: auto;
+  }
+  nav a {
+    padding: 0.5em;
+    color: var(--black);
+    border-bottom: 2px solid transparent;
+    text-decoration: none;
+  }
+  nav a.active {
+    text-decoration: none;
+    border-bottom-color: var(--accent);
+  }
+  .social-links,
+  .social-links a {
+    display: flex;
+  }
+  @media (max-width: 720px) {
+    .social-links {
+      display: none;
+    }
+    nav {
+      flex-direction: column;
+      padding: 0 1em;
+    }
+    h2 {
+      font-size: 4rem !important;
+      text-align: center !important;
+      padding-top: 1rem !important;
+      padding-bottom: 0.5rem !important;
+    }
+    .internal-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>

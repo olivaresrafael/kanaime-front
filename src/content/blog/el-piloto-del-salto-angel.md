@@ -1,0 +1,18 @@
+---
+title: "El piloto del Salto Ángel"
+description: "Jimmie Angel pasó media vida buscando una montaña de oro. No la encontró. Pero descubrió algo mucho más valioso: el salto de agua más alto del planeta."
+pubDate: "Jun 19 2024"
+heroImage: "../../assets/dibujo-avion-jimmy-angel-01.jpg"
+author: "Francisco Olivares"
+tags: ["exploración", "perfiles", "naturaleza"]
+---
+
+Jimmie Angel pasó media vida buscando una montaña de oro. No la encontró. Pero descubrió algo mucho más valioso: el salto de agua más alto del planeta.
+
+Una imagen que se hizo muy conocida en todo el mundo fue la del Salto Ángel, ubicado al sur de Venezuela en el Escudo Guayanés. En 1949, una expedición de National Geographic demostró que era el salto más alto del mundo con 979 metros de altura (3212 pies). Pero poco se sabe del personaje que lo dio a conocer. Veinte años antes, un aventurero aviador estadounidense había volado, en una aeronave muy precaria, por esos territorios desconocidos que llamaban “el mundo perdido” tras una leyenda que hablaba de “una montaña de oro”. Sorpresivamente, cuando pensaba que ya había visto todos los maravillosos cerros, cortados en la cima en forma de plato llamados tepuyes, únicos en la tierra, un día despejado se topó con esa monumental caída de agua que emanaba de una de esas extrañas montañas y caía sobre una gran laguna.
+
+Se llamaba Jimmie Angel y desde aquellos años a la enorme cascada sobre el Auyantepui se le identificó con su nombre. Su historia y aventuras están plasmadas en el libro El Ángel de Jimmie, escrito por un venezolano, también intrépido aviador y aventurero, Jimmy Marull, quien también sufrió un accidente en uno de sus vuelos acrobáticos, muy similar al que sufriera su admirado personaje 37 años antes y que lo llevó a la muerte luego de 8 meses en coma, decidió contar la historia de su colega explorador a quien había admirado e investigado sobre su vida durante más de dos décadas.
+
+Durante la primera guerra mundial que finalizó en 1918 surgieron los primeros aviones fabricados y utilizados para la guerra con escasa tecnología y seguridad para los pilotos que incursionaron por primera vez en ese sistema de transporte.
+
+Al finalizar el conflicto bélico, comenzaba la era de los grandes inventos. Apenas unos años antes los hermanos Wright habían registrado el primer vuelo sostenido de una aeronave más pesada que el aire. Casi todos aquellos pioneros del vuelo sin trabajo y sin recursos se convirtieron en los primeros exploradores en un mundo que se abría a esa nueva posibilidad de transporte abriendo rutas, explorando con apenas una brújula, un reloj y un mapa hecho a mano sobre la marcha, marcando los lugares propicios para aterrizar y recargar combustible. Entonces se decía que el promedio de vida de esos pilotos era de cinco años. Uno de ellos se llamaba James Crawford Angel Marshall (1899-1956) nacido en Misuri, Estados Unidos.

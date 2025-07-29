@@ -1,0 +1,240 @@
+---
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { slugify, matchAccentInsensitive } from "../../utils/slugify";
+import { SITE_TITLE } from "../../consts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  // Extraer todos los tags únicos y mapear cada slug a su display name
+  const tagMap = new Map<string, string>(); // slug -> display name (con acento)
+  posts.forEach((post) => {
+    post.data.tags.forEach((tag) => {
+      const tagSlug = slugify(tag);
+      // Si ya existe, mantenemos la primera versión encontrada (probablemente con acento)
+      if (!tagMap.has(tagSlug)) {
+        tagMap.set(tagSlug, tag);
+      }
+    });
+  });
+
+  // Generar una página por cada slug único
+  return Array.from(tagMap.entries()).map(([tagSlug, tagDisplay]) => {
+    const filteredPosts = posts.filter((post) =>
+      post.data.tags.some((t) => matchAccentInsensitive(t, tagSlug))
+    );
+
+    return {
+      params: { tag: tagSlug },
+      props: {
+        tagSlug,
+        tagDisplay,
+        posts: filteredPosts.sort(
+          (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+        ),
+        allTags: Array.from(tagMap.entries()),
+      },
+    };
+  });
+}
+
+const { tagSlug, tagDisplay, posts, allTags } = Astro.props;
+
+const description = `Artículos sobre ${tagDisplay} en Kanaimé: naturaleza, exploración y cultura desde Venezuela.`;
+const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead title={`${tagDisplay} — ${SITE_TITLE}`} description={description} />
+    <SchemaOrg
+      schema={{
+        type: "breadcrumb",
+        items: [
+          { name: "Inicio", url: "/" },
+          { name: tagDisplay, url: `/tags/${tagSlug}/` },
+        ],
+      }}
+    />
+  </head>
+  <body>
+    <Header />
+
+    <main class="w-full bg-white">
+      <!-- Search Header -->
+      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-8">
+        <p class="text-[10px] md:text-xs uppercase tracking-[0.3em] text-gray-400 mb-4">
+          Explorar el archivo
+        </p>
+
+        <!-- Search Input -->
+        <div class="relative mb-12">
+          <input
+            type="text"
+            id="tag-search-input"
+            placeholder="Buscar artículos..."
+            class="w-full border-b border-gray-300 py-4 pr-12 text-lg md:text-xl font-light bg-transparent focus:outline-none focus:border-[#A31621] transition-colors"
+            style="font-family: 'Source Serif 4', serif;"
+          />
+          <button
+            id="tag-search-btn"
+            class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#A31621] transition-colors"
+            aria-label="Buscar"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 17L17 7M17 7H7M17 7V17"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Popular Tags -->
+        <div class="mb-16">
+          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6">Tags populares</p>
+          <div class="flex flex-wrap gap-3">
+            {allTags.map(([slug, display]) => (
+              <a
+                href={`/tags/${slug}/`}
+                class={`px-5 py-2 border text-xs uppercase tracking-wider transition-colors ${
+                  slug === tagSlug
+                    ? "border-[#A31621] text-[#A31621] bg-[#A31621]/5"
+                    : "border-gray-200 text-gray-600 hover:border-[#A31621] hover:text-[#A31621]"
+                }`}
+              >
+                {display}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pb-20 md:pb-32">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
+          {posts.length} {posts.length === 1 ? "artículo" : "artículos"} en <span class="text-gray-800">{tagDisplay}</span>
+        </p>
+
+        {posts.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-y-16 md:gap-x-8">
+            {posts.map((post, index) => {
+              const imgSrc = post.data.heroImage && typeof post.data.heroImage === "object"
+                ? post.data.heroImage.src
+                : post.data.heroImage;
+
+              // Asymmetric layout: first item spans more, others alternate
+              const isLarge = index === 0;
+              const isOdd = index % 2 !== 0;
+
+              return (
+                <article
+                  class={`${
+                    isLarge
+                      ? "md:col-span-7"
+                      : isOdd
+                        ? "md:col-span-5 md:col-start-8"
+                        : "md:col-span-5"
+                  }`}
+                >
+                  <a href={`/blog/${post.id}/`} class="block group">
+                    {imgSrc && (
+                      <div class="overflow-hidden mb-5 bg-gray-100">
+                        <img
+                          src={imgSrc}
+                          alt={post.data.title}
+                          class="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <div class="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-3">
+                      <FormattedDate date={post.data.pubDate} />
+                      {post.data.tags[0] && (
+                        <>
+                          <span>·</span>
+                          <span>{post.data.tags[0]}</span>
+                        </>
+                      )}
+                    </div>
+
+                    <h2
+                      class={`font-bold leading-tight group-hover:text-[#A31621] transition-colors ${
+                        isLarge ? "text-3xl md:text-4xl" : "text-2xl md:text-3xl"
+                      }`}
+                      style="font-family: 'Bebas Neue', sans-serif;"
+                    >
+                      {post.data.title}
+                    </h2>
+
+                    <p
+                      class="text-sm md:text-base font-light text-gray-500 mt-3 leading-relaxed line-clamp-2"
+                      style="font-family: 'Source Serif 4', serif;"
+                    >
+                      {post.data.description}
+                    </p>
+                  </a>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="text-lg text-gray-400 font-light" style="font-family: 'Source Serif 4', serif;">
+            No hay artículos en esta categoría.
+          </p>
+        )}
+      </section>
+    </main>
+
+    <Footer />
+
+    <script is:inline>
+      (function() {
+        const input = document.getElementById('tag-search-input');
+        const btn = document.getElementById('tag-search-btn');
+
+        function normalize(str) {
+          return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        function filterPosts() {
+          const query = normalize(input.value);
+          const articles = document.querySelectorAll('article');
+          let visibleCount = 0;
+
+          articles.forEach(function(article) {
+            const title = normalize(article.querySelector('h2')?.textContent || '');
+            const desc = normalize(article.querySelector('p')?.textContent || '');
+            const tag = normalize(article.querySelector('span:last-child')?.textContent || '');
+
+            if (title.includes(query) || desc.includes(query) || tag.includes(query)) {
+              article.style.display = '';
+              visibleCount++;
+            } else {
+              article.style.display = 'none';
+            }
+          });
+
+          const countLabel = document.querySelector('section p:first-child');
+          if (countLabel) {
+            countLabel.innerHTML = visibleCount + (visibleCount === 1 ? ' artículo' : ' artículos') + ' encontrados';
+          }
+        }
+
+        if (input) {
+          input.addEventListener('input', filterPosts);
+          input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') filterPosts();
+          });
+        }
+        if (btn) {
+          btn.addEventListener('click', filterPosts);
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+---
+import FormattedDate from "./FormattedDate.astro";
+
+const { postId, img, imgAlt, description, title, pubDate, author } =
+  Astro.props;
+
+const imgSrc = img && typeof img === 'object' ? img.src : img;
+---
+
+<span>
+  <a href={`/blog/${postId}/`}>
+    {imgSrc && <img src={imgSrc} alt={imgAlt || ""} class="w-full h-auto" />}
+    <p class="font-light text-grey my-5">
+      {author}
+      <FormattedDate date={pubDate} />
+    </p>
+    <h4 class="text-5xl font-bold mb-3">{title}</h4>
+    <h5 class="text-1xl font-light text-justify pb-[100px]">{description}</h5>
+  </a>
+</span>

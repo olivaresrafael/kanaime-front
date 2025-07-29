@@ -1,0 +1,17 @@
+---
+// Calcula y muestra el tiempo de lectura estimado
+interface Props {
+  content: string; // texto plano del artículo
+  wordsPerMinute?: number;
+  class?: string;
+}
+
+const { content, wordsPerMinute = 200, class: className = "" } = Astro.props;
+
+const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+---
+
+<span class={`text-xs uppercase tracking-[0.2em] text-gray-400 ${className}`}>
+  {minutes} min de lectura
+</span>

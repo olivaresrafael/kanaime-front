@@ -1,0 +1,101 @@
+---
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+interface ArticleSchema {
+  type: "article";
+  headline: string;
+  description: string;
+  image: string;
+  datePublished: string;
+  dateModified?: string;
+  author: string;
+  url: string;
+  tags?: string[];
+}
+
+interface WebsiteSchema {
+  type: "website";
+  name: string;
+  description: string;
+  url: string;
+}
+
+interface BreadcrumbSchema {
+  type: "breadcrumb";
+  items: BreadcrumbItem[];
+}
+
+type Schema = ArticleSchema | WebsiteSchema | BreadcrumbSchema;
+
+interface Props {
+  schema: Schema;
+}
+
+const { schema } = Astro.props;
+
+let jsonLd: Record<string, unknown> = {};
+
+if (schema.type === "article") {
+  jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: schema.headline,
+    description: schema.description,
+    image: schema.image,
+    datePublished: schema.datePublished,
+    ...(schema.dateModified && { dateModified: schema.dateModified }),
+    author: {
+      "@type": "Person",
+      name: schema.author,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Kanaimé",
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/favicon.svg", Astro.site).toString(),
+      },
+    },
+    url: schema.url,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": schema.url,
+    },
+    ...(schema.tags && schema.tags.length > 0
+      ? { keywords: schema.tags.join(", ") }
+      : {}),
+  };
+} else if (schema.type === "website") {
+  jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: schema.name,
+    description: schema.description,
+    url: schema.url,
+    publisher: {
+      "@type": "Organization",
+      name: "Kanaimé",
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/favicon.svg", Astro.site).toString(),
+      },
+    },
+  };
+} else if (schema.type === "breadcrumb") {
+  jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: schema.items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: new URL(item.url, Astro.site).toString(),
+    })),
+  };
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

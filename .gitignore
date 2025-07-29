@@ -1,0 +1,12 @@
+node_modules
+.vscode
+.DS_Store
+.astro
+.wrangler
+._.astro
+._.wrangler
+._node_modules
+._pnpm-lock.yaml
+._package.json
+dist
+.playwright-mcp

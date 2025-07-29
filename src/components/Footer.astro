@@ -1,0 +1,48 @@
+---
+import { SITE_TITLE } from "../consts";
+---
+
+<footer class="border-t border-gray-200 mt-20">
+  <div class="container mx-auto px-4 md:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <!-- Columna 1: Links rápidos -->
+      <div>
+        <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-6 bebas-neue-regular">Navegación</h3>
+        <ul class="space-y-3">
+          <li><a href="/" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Inicio</a></li>
+          <li><a href="/about" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">About</a></li>
+          <li><a href="/sponsors" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Sponsors</a></li>
+          <li><a href="/rss.xml" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">RSS</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 2: Logo centrado -->
+      <div class="flex flex-col items-center justify-center">
+        <a href="/" class="text-6xl md:text-7xl font-bold bebas-neue-regular mb-4">{SITE_TITLE}</a>
+        <p class="text-center text-gray-500 text-sm max-w-xs source-serif-4-font">
+          Naturaleza, exploración y cultura desde el corazón de Venezuela.
+        </p>
+      </div>
+
+      <!-- Columna 3: Categorías y contacto -->
+      <div class="md:text-right">
+        <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-6 bebas-neue-regular">Categorías</h3>
+        <ul class="space-y-3">
+          <li><a href="/tags/naturaleza" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Naturaleza</a></li>
+          <li><a href="/tags/exploracion" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Exploración</a></li>
+          <li><a href="/tags/cultura" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Cultura</a></li>
+          <li><a href="/tags/perfiles" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">Perfiles</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-gray-400 source-serif-4-font">
+        &copy; {new Date().getFullYear()} {SITE_TITLE}. Todos los derechos reservados.
+      </p>
+      <p class="text-sm text-gray-400 source-serif-4-font">
+        Hecho con pasión en Venezuela.
+      </p>
+    </div>
+  </div>
+</footer>
