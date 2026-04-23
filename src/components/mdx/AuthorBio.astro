@@ -14,9 +14,11 @@ const author = allAuthors.find(
   (a) => a.data.name.toLowerCase() === (authorName || "").toLowerCase()
 );
 
-const authorPhotoSrc = author?.data.photo && typeof author.data.photo === "object"
-  ? author.data.photo.src
-  : author?.data.photo;
+const authorPhotoSrc: string | undefined = author?.data.photo
+  ? typeof author.data.photo === "object"
+    ? author.data.photo.src
+    : author.data.photo
+  : undefined;
 ---
 
 {author && (

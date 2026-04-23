@@ -47,7 +47,6 @@ export async function getStaticPaths() {
 const { tagSlug, tagDisplay, posts, allTags } = Astro.props;
 
 const description = `Artículos sobre ${tagDisplay} en Kanaimé: naturaleza, exploración y cultura desde Venezuela.`;
-const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
 ---
 
 <!doctype html>

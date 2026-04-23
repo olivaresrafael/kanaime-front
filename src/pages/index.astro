@@ -206,7 +206,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
           if (!skipStorage) {
             try {
               sessionStorage.setItem(SESSION_KEY, 'true');
-            } catch (e) {}
+            } catch (_e) {}
           }
         }
 
@@ -237,7 +237,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
             if (referrer) {
               isInternal = new URL(referrer).hostname === location.hostname;
             }
-          } catch (e) {}
+          } catch (_e) {}
 
           if (isInternal) {
             // Viene de otra página del mismo sitio: ocultar inmediatamente
@@ -251,7 +251,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
                 // Primera vez en esta pestaña: mostrar cover, ocultar botón
                 if (showCoverBtn) showCoverBtn.classList.add('hidden');
               }
-            } catch (e) {
+            } catch (_e) {
               // sessionStorage no disponible: mostrar cover
               if (showCoverBtn) showCoverBtn.classList.add('hidden');
             }
@@ -259,7 +259,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
         }
 
         if (heroContent) {
-          heroContent.addEventListener('click', function(e) {
+          heroContent.addEventListener('click', function() {
             closeHero();
           });
         }
