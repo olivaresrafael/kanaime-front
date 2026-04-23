@@ -1,18 +1,31 @@
 ---
 import FormattedDate from "./FormattedDate.astro";
 import SkeletonImage from "./SkeletonImage.astro";
+import { slugify } from "../utils/slugify";
 
-const { postId, img, imgAlt, description, title, pubDate, author } =
+const { postId, img, imgAlt, description, title, pubDate, author, tags } =
   Astro.props;
 
 const imgSrc = img && typeof img === 'object' ? img.src : img;
+const primaryTag = tags?.[0];
 ---
 
 <span>
   <a href={`/blog/${postId}/`}>
     {imgSrc && <SkeletonImage src={imgSrc} alt={imgAlt || ""} aspect="4/3" class="w-full" />}
     <p class="font-light text-grey my-5">
-      {author}
+      {author && <span>{author}</span>}
+      {author && primaryTag && <span class="mx-2">·</span>}
+      {primaryTag && (
+        <a
+          href={`/tags/${slugify(primaryTag)}/`}
+          class="text-grey hover:text-[#A31621] transition-colors"
+          onclick="event.stopPropagation();"
+        >
+          {primaryTag}
+        </a>
+      )}
+      <span class="mx-2">·</span>
       <FormattedDate date={pubDate} />
     </p>
     <h4 class="text-5xl font-bold mb-3">{title}</h4>

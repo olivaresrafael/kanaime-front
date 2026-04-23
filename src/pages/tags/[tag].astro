@@ -12,16 +12,32 @@ import { SITE_TITLE } from "../../consts";
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
 
-  // Extraer todos los tags únicos y mapear cada slug a su display name
+  // Tags base que siempre queremos que existan como página (evita 404)
+  const ALL_TAGS = [
+    "naturaleza",
+    "exploración",
+    "cultura",
+    "fotografía",
+    "perfiles",
+  ];
+
+  // Extraer todos los tags únicos de los posts y mapear cada slug a su display name
   const tagMap = new Map<string, string>(); // slug -> display name (con acento)
   posts.forEach((post) => {
     post.data.tags.forEach((tag) => {
       const tagSlug = slugify(tag);
-      // Si ya existe, mantenemos la primera versión encontrada (probablemente con acento)
       if (!tagMap.has(tagSlug)) {
         tagMap.set(tagSlug, tag);
       }
     });
+  });
+
+  // Asegurar que todos los tags base existan en el mapa
+  ALL_TAGS.forEach((tag) => {
+    const tagSlug = slugify(tag);
+    if (!tagMap.has(tagSlug)) {
+      tagMap.set(tagSlug, tag);
+    }
   });
 
   // Generar una página por cada slug único
@@ -151,6 +167,8 @@ const description = `Artículos sobre ${tagDisplay} en Kanaimé: naturaleza, exp
                     )}
 
                     <div class="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-3">
+                      {post.data.author && <span>{post.data.author}</span>}
+                      {post.data.author && <span>·</span>}
                       <FormattedDate date={post.data.pubDate} />
                       {post.data.tags[0] && (
                         <>

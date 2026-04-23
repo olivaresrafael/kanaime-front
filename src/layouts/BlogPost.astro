@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import SchemaOrg from "../components/SchemaOrg.astro";
 import Header from "../components/Header.astro";
@@ -39,6 +39,12 @@ const canonicalUrl =
   (slug ? new URL(`/blog/${slug}/`, Astro.site).toString() : new URL(Astro.url.pathname, Astro.site).toString());
 const breadcrumbUrl = customCanonicalUrl || (slug ? `/blog/${slug}/` : Astro.url.pathname);
 const primaryTag = tags?.[0];
+
+const allAuthors = await getCollection("authors");
+const authorEntry = author
+  ? allAuthors.find((a) => a.data.name.toLowerCase() === author.toLowerCase())
+  : undefined;
+const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
 ---
 
 <html lang="es">
@@ -210,7 +216,13 @@ const primaryTag = tags?.[0];
 
           <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm text-white/80">
             <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-              <span itemprop="name">{author || "Kanaimé Editorial"}</span>
+              {authorProfileUrl ? (
+                <a href={authorProfileUrl} class="hover:text-white transition-colors" itemprop="name">
+                  {author}
+                </a>
+              ) : (
+                <span itemprop="name">{author || "Kanaimé Editorial"}</span>
+              )}
             </span>
             <span class="hidden md:inline text-white/40">|</span>
             <time datetime={pubDate.toISOString()} itemprop="datePublished">
