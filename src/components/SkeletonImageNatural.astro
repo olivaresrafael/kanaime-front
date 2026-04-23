@@ -1,0 +1,75 @@
+---
+// SkeletonImageNatural: skeleton para imágenes con aspecto natural (h:auto).
+// Ideal para listados donde no se quiere recortar la imagen.
+interface Props {
+  src: string;
+  alt?: string;
+  class?: string;
+  imgClass?: string;
+  minHeight?: string;
+}
+
+const {
+  src,
+  alt = "",
+  class: className = "",
+  imgClass = "",
+  minHeight = "200px",
+} = Astro.props;
+const uniqueId = Math.random().toString(36).substring(2, 9);
+---
+
+<div
+  class={`skeleton-natural-wrap skeleton-natural-${uniqueId} ${className}`}
+  style={`min-height: ${minHeight};`}
+>
+  <div class="skeleton-natural-pulse"></div>
+  <img
+    src={src}
+    alt={alt}
+    class={`skeleton-natural-img ${imgClass}`}
+    loading="lazy"
+    onload={`document.querySelector('.skeleton-natural-${uniqueId}').classList.add('loaded')`}
+    onerror={`document.querySelector('.skeleton-natural-${uniqueId}').classList.add('error')`}
+  />
+</div>
+
+<style>
+  .skeleton-natural-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+  .skeleton-natural-pulse {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    z-index: 1;
+  }
+  .skeleton-natural-img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    display: block;
+  }
+  .skeleton-natural-wrap.loaded .skeleton-natural-img,
+  .skeleton-natural-wrap.error .skeleton-natural-img {
+    opacity: 1;
+  }
+  .skeleton-natural-wrap.loaded .skeleton-natural-pulse,
+  .skeleton-natural-wrap.error .skeleton-natural-pulse {
+    opacity: 0;
+    animation: none;
+    transition: opacity 0.3s ease;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+// SkeletonText: líneas de texto placeholder con animación
+// Uso: <SkeletonText lines={3} />
+interface Props {
+  lines?: number;
+  class?: string;
+  lastLineWidth?: string; // ej: "60%", "80%"
+}
+
+const { lines = 3, class: className = "", lastLineWidth = "60%" } = Astro.props;
+---
+
+<div class={`skeleton-text ${className}`}>
+  {Array.from({ length: lines }).map((_, i) => (
+    <div
+      class="skeleton-line"
+      style={i === lines - 1 ? `width: ${lastLineWidth};` : undefined}
+    />
+  ))}
+</div>
+
+<style>
+  .skeleton-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+  }
+  .skeleton-line {
+    height: 0.85em;
+    width: 100%;
+    background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: 2px;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>

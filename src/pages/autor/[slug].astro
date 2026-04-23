@@ -6,6 +6,7 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PostBlock from "../../components/PostBlock.astro";
 import Divider from "../../components/Divider.astro";
+import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
 import { SITE_TITLE } from "../../consts";
 
 export async function getStaticPaths() {
@@ -72,10 +73,12 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
         <div class="flex flex-col md:flex-row items-start gap-10 md:gap-16">
           {photoSrc && (
             <div class="shrink-0 w-40 h-40 md:w-56 md:h-56 overflow-hidden bg-gray-100">
-              <img
+              <SkeletonImageNatural
                 src={photoSrc}
                 alt={author.data.name}
-                class="w-full h-full object-cover grayscale"
+                class="w-full h-full"
+                minHeight="0"
+                imgClass="w-full h-full object-cover grayscale"
               />
             </div>
           )}
@@ -147,13 +150,12 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
                 <article>
                   <a href={`/blog/${post.id}/`} class="block group">
                     {imgSrc && (
-                      <div class="overflow-hidden mb-4 bg-gray-100">
-                        <img
-                          src={imgSrc}
-                          alt={post.data.title}
-                          class="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
+                      <SkeletonImageNatural
+                        src={imgSrc}
+                        alt={post.data.title}
+                        class="mb-4 bg-gray-100"
+                        imgClass="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+                      />
                     )}
                     <h3
                       class="text-xl md:text-2xl font-bold leading-tight group-hover:text-[#A31621] transition-colors"

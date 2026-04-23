@@ -1,0 +1,72 @@
+---
+// SkeletonCard: placeholder de tarjeta de artículo con imagen + texto
+// Ideal para listados de posts mientras cargan o como fallback.
+interface Props {
+  aspect?: string;
+  lines?: number;
+  rounded?: boolean;
+  class?: string;
+}
+
+const {
+  aspect = "16/9",
+  lines = 3,
+  rounded = false,
+  class: className = "",
+} = Astro.props;
+---
+
+<div class={`skeleton-card ${rounded ? 'rounded-lg overflow-hidden' : ''} ${className}`}>
+  <div class="skeleton-img" data-aspect={aspect}></div>
+  <div class="skeleton-body">
+    {Array.from({ length: lines }).map((_, i) => (
+      <div class="skeleton-line" style={i === lines - 1 ? "width: 60%;" : undefined} />
+    ))}
+  </div>
+</div>
+
+<style>
+  .skeleton-card {
+    background: #fff;
+    width: 100%;
+  }
+  .skeleton-img {
+    width: 100%;
+    background: #f3f4f6;
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+  }
+  .skeleton-img[data-aspect="16/9"] { aspect-ratio: 16/9; }
+  .skeleton-img[data-aspect="4/3"] { aspect-ratio: 4/3; }
+  .skeleton-img[data-aspect="3/4"] { aspect-ratio: 3/4; }
+  .skeleton-img[data-aspect="21/9"] { aspect-ratio: 21/9; }
+  .skeleton-img[data-aspect="1/1"] { aspect-ratio: 1/1; }
+
+  .skeleton-body {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+  }
+  .skeleton-line {
+    height: 0.85em;
+    width: 100%;
+    background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: 2px;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>

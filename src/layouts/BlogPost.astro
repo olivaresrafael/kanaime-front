@@ -139,6 +139,32 @@ const primaryTag = tags?.[0];
         text-align: center;
         margin-top: 0.75rem;
       }
+      .skeleton-hero-pulse {
+        background: linear-gradient(90deg, #1f0507 0%, #3d0a0e 50%, #1f0507 100%);
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s infinite;
+        z-index: 1;
+      }
+      .skeleton-hero-img {
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+      .skeleton-hero.loaded .skeleton-hero-img,
+      .skeleton-hero.error .skeleton-hero-img {
+        opacity: 1;
+      }
+      .skeleton-hero.loaded .skeleton-hero-pulse,
+      .skeleton-hero.error .skeleton-hero-pulse {
+        opacity: 0;
+        animation: none;
+        transition: opacity 0.3s ease;
+      }
+      @keyframes skeleton-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
     </style>
   </head>
 
@@ -148,13 +174,17 @@ const primaryTag = tags?.[0];
     <!-- HERO FULL-WIDTH: aspect-ratio fijo para que la imagen y el gradiente coincidan exactamente -->
     <header class="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] flex items-end overflow-hidden">
       {heroSrc && (
-        <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 z-0 skeleton-hero">
           <img
             src={heroSrc}
             alt={title}
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover skeleton-hero-img"
+            loading="lazy"
+            onload="this.parentElement.classList.add('loaded')"
+            onerror="this.parentElement.classList.add('error')"
             itemprop="image"
           />
+          <div class="skeleton-hero-pulse absolute inset-0"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         </div>
       )}

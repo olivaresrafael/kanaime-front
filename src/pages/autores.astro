@@ -4,6 +4,7 @@ import BaseHead from "../components/BaseHead.astro";
 import SchemaOrg from "../components/SchemaOrg.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import SkeletonImageNatural from "../components/SkeletonImageNatural.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 
 const authors = await getCollection("authors");
@@ -70,10 +71,11 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
                 <a href={`/autor/${author.id}/`} class="block">
                   <div class="overflow-hidden mb-6 bg-gray-100">
                     {photoSrc ? (
-                      <img
+                      <SkeletonImageNatural
                         src={photoSrc}
                         alt={author.data.name}
-                        class="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                        class="w-full"
+                        imgClass="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div class="w-full aspect-[3/4] flex items-center justify-center bg-gray-200 text-gray-400">

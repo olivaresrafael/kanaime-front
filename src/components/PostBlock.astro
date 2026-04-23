@@ -1,5 +1,6 @@
 ---
 import FormattedDate from "./FormattedDate.astro";
+import SkeletonImage from "./SkeletonImage.astro";
 
 const { postId, img, imgAlt, description, title, pubDate, author } =
   Astro.props;
@@ -9,7 +10,7 @@ const imgSrc = img && typeof img === 'object' ? img.src : img;
 
 <span>
   <a href={`/blog/${postId}/`}>
-    {imgSrc && <img src={imgSrc} alt={imgAlt || ""} class="w-full h-auto" />}
+    {imgSrc && <SkeletonImage src={imgSrc} alt={imgAlt || ""} aspect="4/3" class="w-full" />}
     <p class="font-light text-grey my-5">
       {author}
       <FormattedDate date={pubDate} />
