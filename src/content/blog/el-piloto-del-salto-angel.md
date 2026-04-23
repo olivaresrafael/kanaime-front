@@ -2,7 +2,7 @@
 title: "El piloto del Salto Ángel"
 description: "Jimmie Angel pasó media vida buscando una montaña de oro. No la encontró. Pero descubrió algo mucho más valioso: el salto de agua más alto del planeta."
 pubDate: "Jun 19 2024"
-heroImage: "../../assets/dibujo-avion-jimmy-angel-01.jpg"
+heroImage: "../../assets/dibujo-avion-jimmy-angel-01.JPG"
 author: "Francisco Olivares"
 tags: ["exploración", "perfiles", "naturaleza"]
 ---
