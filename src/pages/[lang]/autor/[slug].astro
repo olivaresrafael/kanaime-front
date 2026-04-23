@@ -1,27 +1,36 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BaseHead from "../../components/BaseHead.astro";
-import SchemaOrg from "../../components/SchemaOrg.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import Divider from "../../components/Divider.astro";
-import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
-import { SITE_TITLE } from "../../consts";
+import BaseHead from "../../../components/BaseHead.astro";
+import SchemaOrg from "../../../components/SchemaOrg.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import Divider from "../../../components/Divider.astro";
+import SkeletonImageNatural from "../../../components/SkeletonImageNatural.astro";
+import { SITE_TITLE } from "../../../consts";
 
 export async function getStaticPaths() {
   const authors = await getCollection("authors");
   const posts = await getCollection("blog");
 
-  return authors.map((author) => {
-    const authorPosts = posts
-      .filter((p) => p.data.author?.toLowerCase() === author.data.name.toLowerCase())
-      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const paths: Array<{
+    params: { lang: string; slug: string };
+    props: { author: CollectionEntry<"authors">; posts: CollectionEntry<"blog">[] };
+  }> = [];
 
-    return {
-      params: { slug: author.id },
-      props: { author, posts: authorPosts },
-    };
+  authors.forEach((author) => {
+    ["es", "en"].forEach((lang) => {
+      const authorPosts = posts
+        .filter((p) => p.data.author?.toLowerCase() === author.data.name.toLowerCase() && p.data.lang === lang)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+      paths.push({
+        params: { lang, slug: author.id },
+        props: { author, posts: authorPosts },
+      });
+    });
   });
+
+  return paths;
 }
 
 type Props = {
@@ -30,6 +39,7 @@ type Props = {
 };
 
 const { author, posts } = Astro.props;
+const lang = (Astro.params.lang as "es" | "en") || "es";
 const photoSrc = author.data.photo && typeof author.data.photo === "object"
   ? author.data.photo.src
   : author.data.photo;
@@ -38,34 +48,35 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <BaseHead
       title={`${author.data.name} — ${SITE_TITLE}`}
       description={author.data.bio}
       image={author.data.photo}
+      lang={lang}
     />
     <SchemaOrg
       schema={{
         type: "website",
         name: `${author.data.name} — ${SITE_TITLE}`,
         description: author.data.bio,
-        url: `${siteUrl}/autor/${author.id}/`,
+        url: `${siteUrl}/${lang}/autor/${author.id}/`,
       }}
     />
     <SchemaOrg
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: "/" },
-          { name: "Autores", url: "/autores/" },
-          { name: author.data.name, url: `/autor/${author.id}/` },
+          { name: "Inicio", url: `/${lang}/` },
+          { name: "Autores", url: `/${lang}/autores/` },
+          { name: author.data.name, url: `/${lang}/autor/${author.id}/` },
         ],
       }}
     />
   </head>
   <body>
-    <Header />
+    <Header lang={lang} />
     <main class="w-full bg-white">
       <!-- Author Header -->
       <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12">
@@ -147,7 +158,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
                 : post.data.heroImage;
               return (
                 <article>
-                  <a href={`/blog/${post.id}/`} class="block group">
+                  <a href={`/${lang}/blog/${post.id}/`} class="block group">
                     {imgSrc && (
                       <SkeletonImageNatural
                         src={imgSrc}
@@ -180,6 +191,6 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
         )}
       </section>
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

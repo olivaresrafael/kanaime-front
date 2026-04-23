@@ -4,9 +4,10 @@ import PostBlock from "./PostBlock.astro";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
+  lang: "es" | "en";
 }
 
-const { posts } = Astro.props;
+const { posts, lang } = Astro.props;
 ---
 
 <div class="grid grid-cols-1 md:grid-cols-2">
@@ -25,6 +26,7 @@ const { posts } = Astro.props;
                   pubDate={post.data.pubDate}
                   author={post.data.author}
                   tags={post.data.tags}
+                  lang={lang}
                 />
               </li>
             )
@@ -47,6 +49,7 @@ const { posts } = Astro.props;
                   pubDate={post.data.pubDate}
                   author={post.data.author}
                   tags={post.data.tags}
+                  lang={lang}
                 />
               </li>
             )

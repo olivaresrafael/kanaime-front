@@ -1,22 +1,24 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro";
+import BlogPost from "../../../layouts/BlogPost.astro";
 import { render } from "astro:content";
-import DropCap from "../../components/mdx/DropCap.astro";
-import PullQuote from "../../components/mdx/PullQuote.astro";
-import TwoColumn from "../../components/mdx/TwoColumn.astro";
-import FullWidthImage from "../../components/mdx/FullWidthImage.astro";
+import DropCap from "../../../components/mdx/DropCap.astro";
+import PullQuote from "../../../components/mdx/PullQuote.astro";
+import TwoColumn from "../../../components/mdx/TwoColumn.astro";
+import FullWidthImage from "../../../components/mdx/FullWidthImage.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
   return posts.map((post) => ({
-    params: { slug: post.id },
+    params: { lang: post.data.lang, slug: post.id },
     props: post,
   }));
 }
 type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
+const lang = (Astro.params.lang as "es" | "en") || "es";
+
 const { Content } = await render(post);
 
 // Calcular tiempo de lectura (aproximado desde markdown raw)
@@ -29,6 +31,7 @@ const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
   slug={post.id}
   tags={post.data.tags}
   readingTimeMinutes={readingTimeMinutes}
+  lang={lang}
 >
   <Content components={{ DropCap, PullQuote, TwoColumn, FullWidthImage }} />
 </BlogPost>

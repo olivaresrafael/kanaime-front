@@ -1,14 +1,32 @@
 ---
 import SkeletonImage from "./SkeletonImage.astro";
+import FormattedDate from "./FormattedDate.astro";
+import { slugify } from "../utils/slugify";
 
-const { postId, imgUrl, imgAlt, description, title } = Astro.props;
+const { postId, imgUrl, imgAlt, description, title, pubDate, author, tags, lang } = Astro.props;
+const primaryTag = tags?.[0];
 ---
 
-<a href={`/blog/${postId}/`} class="grid grid-cols-8 p-5 justify-items-center">
+<a href={`/${lang}/blog/${postId}/`} class="grid grid-cols-8 p-5 justify-items-center">
   <div class="col-span-8 pb-8">
     <h2 class="text-6xl font-bold text-left py-[60px] w-[900px]">
       {title.toUpperCase()}
     </h2>
+    <p class="font-light text-grey text-center mt-[-20px] mb-4">
+      <span>{author}</span>
+      {primaryTag && (
+        <>
+          <span class="mx-2">·</span>
+          <span
+            class="text-grey hover:text-[#A31621] transition-colors"
+          >
+            {primaryTag}
+          </span>
+        </>
+      )}
+      <span class="mx-2">·</span>
+      <FormattedDate date={pubDate} />
+    </p>
   </div>
   <div class="col-span-4 col-start-3">
     {imgUrl && <SkeletonImage src={imgUrl} alt={imgAlt || ""} aspect="16/9" class="w-full" />}

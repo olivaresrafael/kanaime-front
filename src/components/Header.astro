@@ -1,32 +1,46 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
 import { SITE_TITLE } from "../consts";
+import { useTranslations } from "../i18n/utils";
 import Divider from "./Divider.astro";
+
+interface Props {
+  lang: "es" | "en";
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <header>
   <nav>
     <h2 class="text-8xl font-bold text-right pt-10 pb-6">
-      <a href="/">{SITE_TITLE}</a>
+      <a href={`/${lang}/`}>{SITE_TITLE}</a>
     </h2>
     <div class="internal-links">
-      <HeaderLink href="/tags/naturaleza">naturaleza</HeaderLink>
-      <HeaderLink href="/tags/exploracion">exploración</HeaderLink>
-      <HeaderLink href="/tags/cultura">cultura</HeaderLink>
-      <HeaderLink href="/tags/fotografia">fotografía</HeaderLink>
-      <HeaderLink href="/tags/perfiles">perfiles</HeaderLink>
+      <HeaderLink href={`/${lang}/tags/${lang === "es" ? "naturaleza" : "nature"}/`}>{t("nav.nature")}</HeaderLink>
+      <HeaderLink href={`/${lang}/tags/${lang === "es" ? "exploracion" : "exploration"}/`}>{t("nav.exploration")}</HeaderLink>
+      <HeaderLink href={`/${lang}/tags/${lang === "es" ? "cultura" : "culture"}/`}>{t("nav.culture")}</HeaderLink>
+      <HeaderLink href={`/${lang}/tags/${lang === "es" ? "fotografia" : "photography"}/`}>{t("nav.photography")}</HeaderLink>
+      <HeaderLink href={`/${lang}/tags/${lang === "es" ? "perfiles" : "profiles"}/`}>{t("nav.profiles")}</HeaderLink>
     </div>
-    <div class="internal-links">
-      <HeaderLink href="/">Home</HeaderLink>
-      <HeaderLink href="/autores">Autores</HeaderLink>
-      <HeaderLink href="/sponsors">Sponsors</HeaderLink>
-      <HeaderLink href="/about">About</HeaderLink>
-      <a href="/search/" aria-label="Buscar artículos" class="search-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </a>
+    <div class="header-right">
+      <div class="internal-links">
+        <HeaderLink href={`/${lang}/`}>{t("nav.home")}</HeaderLink>
+        <HeaderLink href={`/${lang}/autores/`}>{t("nav.authors")}</HeaderLink>
+        <HeaderLink href={`/${lang}/sponsors/`}>{t("nav.sponsors")}</HeaderLink>
+        <HeaderLink href={`/${lang}/about/`}>{t("nav.about")}</HeaderLink>
+        <a href={`/${lang}/search/`} aria-label={t("nav.search")} class="search-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </a>
+      </div>
+      <div class="language-switcher-wrapper">
+        <LanguageSwitcher lang={lang} />
+      </div>
     </div>
   </nav>
   <Divider className="mx-[50px]" />
@@ -72,6 +86,14 @@ import Divider from "./Divider.astro";
   .search-link:hover {
     color: var(--accent);
   }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .language-switcher-wrapper {
+    margin-top: 0.25rem;
+  }
   .social-links,
   .social-links a {
     display: flex;
@@ -94,6 +116,9 @@ import Divider from "./Divider.astro";
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+    }
+    .header-right {
+      align-items: center;
     }
   }
 </style>

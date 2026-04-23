@@ -20,7 +20,6 @@ export default defineConfig({
  },
   vite: {
     plugins: [tailwindcss()],
-    // Previene errores de caché corrupta del dep optimizer con módulos internos de Astro
     optimizeDeps: {
       force: true,
     },

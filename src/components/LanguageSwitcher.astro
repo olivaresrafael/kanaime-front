@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import { getOtherLocale } from "../i18n/utils";
+import { tagTranslations } from "../i18n/tags";
+import { slugify } from "../utils/slugify";
+
+interface Props {
+  lang: "es" | "en";
+}
+
+const { lang } = Astro.props;
+const otherLocale = getOtherLocale(lang);
+const currentPath = Astro.url.pathname;
+
+// Default: just swap the lang prefix
+let otherPath = currentPath.replace(`/${lang}/`, `/${otherLocale}/`);
+
+// For blog posts, try to find the translated version
+const blogMatch = currentPath.match(new RegExp(`^/${lang}/blog/(.+)/$`));
+if (blogMatch) {
+  const currentSlug = blogMatch[1];
+  const posts = await getCollection("blog");
+
+  // Find current post
+  const currentPost = posts.find((p) => p.id === currentSlug && p.data.lang === lang);
+
+  if (currentPost?.data.translationOf) {
+    // Current post has a translationOf field → use that slug
+    otherPath = `/${otherLocale}/blog/${currentPost.data.translationOf}/`;
+  } else {
+    // Look for a post in the other language that points to this one
+    const otherPost = posts.find(
+      (p) => p.data.lang === otherLocale && p.data.translationOf === currentSlug
+    );
+    if (otherPost) {
+      otherPath = `/${otherLocale}/blog/${otherPost.id}/`;
+    }
+  }
+}
+
+// For tag pages, translate the tag slug
+const tagMatch = currentPath.match(new RegExp(`^/${lang}/tags/(.+)/$`));
+if (tagMatch) {
+  const currentTagSlug = tagMatch[1];
+  const map = tagTranslations[otherLocale];
+  // Direct lookup first, then accent-insensitive fallback
+  let otherTagSlug = map[currentTagSlug];
+  if (!otherTagSlug) {
+    const entry = Object.entries(map).find(
+      ([key]) => key.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === currentTagSlug
+    );
+    otherTagSlug = entry?.[1];
+  }
+  otherPath = `/${otherLocale}/tags/${slugify(otherTagSlug || currentTagSlug)}/`;
+}
+
+// For author pages, keep the same slug (authors are shared)
+const authorMatch = currentPath.match(new RegExp(`^/${lang}/autor/(.+)/$`));
+if (authorMatch) {
+  otherPath = `/${otherLocale}/autor/${authorMatch[1]}/`;
+}
+---
+
+<div class="language-switcher flex items-center gap-2 text-xs uppercase tracking-wider">
+  <a
+    href={lang === "es" ? currentPath : otherPath}
+    class={lang === "es" ? "text-[#A31621] font-bold" : "text-gray-400 hover:text-[#A31621] transition-colors"}
+    aria-label="Cambiar a español"
+  >
+    ES
+  </a>
+  <span class="text-gray-300">|</span>
+  <a
+    href={lang === "en" ? currentPath : otherPath}
+    class={lang === "en" ? "text-[#A31621] font-bold" : "text-gray-400 hover:text-[#A31621] transition-colors"}
+    aria-label="Switch to English"
+  >
+    EN
+  </a>
+</div>

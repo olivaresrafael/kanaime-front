@@ -12,8 +12,10 @@ const blog = defineCollection({
       updatedDate: z.coerce.date().optional(),
       heroImage: image().optional(),
       coverImage: image().optional(),
-      author: z.string().optional(),
+      author: z.string().default("Kanaimé Editorial"),
       tags: z.array(z.string()).default([]),
+      lang: z.enum(["es", "en"]).default("es"),
+      translationOf: z.string().optional(),
     }),
 });
 

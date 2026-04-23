@@ -3,7 +3,7 @@ import FormattedDate from "./FormattedDate.astro";
 import SkeletonImage from "./SkeletonImage.astro";
 import { slugify } from "../utils/slugify";
 
-const { postId, img, imgAlt, description, title, pubDate, author, tags } =
+const { postId, img, imgAlt, description, title, pubDate, author, tags, lang } =
   Astro.props;
 
 const imgSrc = img && typeof img === 'object' ? img.src : img;
@@ -11,19 +11,21 @@ const primaryTag = tags?.[0];
 ---
 
 <span>
-  <a href={`/blog/${postId}/`}>
+  <a href={`/${lang}/blog/${postId}/`}>
     {imgSrc && <SkeletonImage src={imgSrc} alt={imgAlt || ""} aspect="4/3" class="w-full" />}
     <p class="font-light text-grey my-5">
-      {author && <span>{author}</span>}
-      {author && primaryTag && <span class="mx-2">·</span>}
+      <span>{author}</span>
       {primaryTag && (
-        <a
-          href={`/tags/${slugify(primaryTag)}/`}
-          class="text-grey hover:text-[#A31621] transition-colors"
-          onclick="event.stopPropagation();"
-        >
-          {primaryTag}
-        </a>
+        <>
+          <span class="mx-2">·</span>
+          <a
+            href={`/${lang}/tags/${slugify(primaryTag)}/`}
+            class="text-grey hover:text-[#A31621] transition-colors"
+            onclick="event.stopPropagation();"
+          >
+            {primaryTag}
+          </a>
+        </>
       )}
       <span class="mx-2">·</span>
       <FormattedDate date={pubDate} />

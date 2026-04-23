@@ -4,12 +4,13 @@ import { getCollection } from "astro:content";
 
 interface Props {
   authorName: string;
+  lang?: "es" | "en";
 }
 
-const { authorName } = Astro.props;
+const { authorName, lang = "es" } = Astro.props;
 
 const allAuthors = await getCollection("authors");
-// Buscar autor por nombre (fallback: usar el primero que coincida parcialmente)
+// Buscar autor por nombre en la colección
 const author = allAuthors.find(
   (a) => a.data.name.toLowerCase() === (authorName || "").toLowerCase()
 );
@@ -19,43 +20,54 @@ const authorPhotoSrc: string | undefined = author?.data.photo
     ? author.data.photo.src
     : author.data.photo
   : undefined;
+
+const displayName = author?.data.name || authorName || "Kanaimé Editorial";
+const role = author?.data.role || "Autor";
+const bio = author?.data.bio || "";
+const authorId = author?.id;
 ---
 
-{author && (
-  <aside class="mt-20 md:mt-28 pt-12 border-t border-gray-200">
-    <div class="flex flex-col md:flex-row items-start gap-8 md:gap-12">
-      {authorPhotoSrc && (
-        <div class="shrink-0">
-          <img
-            src={authorPhotoSrc}
-            alt={author.data.name}
-            class="w-24 h-24 md:w-32 md:h-32 object-cover grayscale"
-            loading="lazy"
-          />
-        </div>
-      )}
-      <div class="flex-1">
-        <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">Escrito por</p>
-        <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Bebas Neue', sans-serif;">
-          <a href={`/autor/${author.id}/`} class="hover:text-[#A31621] transition-colors">
-            {author.data.name}
+<aside class="mt-20 md:mt-28 pt-12 border-t border-gray-200">
+  <div class="flex flex-col md:flex-row items-start gap-8 md:gap-12">
+    {authorPhotoSrc && (
+      <div class="shrink-0">
+        <img
+          src={authorPhotoSrc}
+          alt={displayName}
+          class="w-24 h-24 md:w-32 md:h-32 object-cover grayscale"
+          loading="lazy"
+        />
+      </div>
+    )}
+    <div class="flex-1">
+      <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">Escrito por</p>
+      <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Bebas Neue', sans-serif;">
+        {authorId ? (
+          <a href={`/${lang}/autor/${authorId}/`} class="hover:text-[#A31621] transition-colors">
+            {displayName}
           </a>
-        </h3>
-        <p class="text-sm uppercase tracking-wider text-gray-400 mb-4">{author.data.role}</p>
+        ) : (
+          <span>{displayName}</span>
+        )}
+      </h3>
+      {role && <p class="text-sm uppercase tracking-wider text-gray-400 mb-4">{role}</p>}
+      {bio && (
         <p class="text-lg font-light leading-relaxed text-gray-700" style="font-family: 'Source Serif 4', serif;">
-          {author.data.bio}
+          {bio}
         </p>
+      )}
+      {authorId && (
         <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
-          <a href={`/autor/${author.id}/`} class="text-gray-400 hover:text-[#A31621] transition-colors">
+          <a href={`/${lang}/autor/${authorId}/`} class="text-gray-400 hover:text-[#A31621] transition-colors">
             Ver perfil
           </a>
-          {author.data.social?.twitter && (
+          {author?.data.social?.twitter && (
             <a href={author.data.social.twitter} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
               Seguir
             </a>
           )}
         </div>
-      </div>
+      )}
     </div>
-  </aside>
-)}
+  </div>
+</aside>

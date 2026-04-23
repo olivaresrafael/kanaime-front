@@ -1,0 +1,299 @@
+---
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import MainPost from "../../components/MainPost.astro";
+import PostBlock from "../../components/PostBlock.astro";
+import HomeBody from "../../components/HomeBody.astro";
+import Divider from "../../components/Divider.astro";
+import { useTranslations } from "../../i18n/utils";
+import { SITE_TITLE, SITE_DESCRIPTION, COVER_BG_COLOR } from "../../consts";
+
+const lang = (Astro.params.lang as "es" | "en") || "es";
+const t = useTranslations(lang);
+
+const posts = (await getCollection("blog"))
+  .filter((p) => p.data.lang === lang)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const featuredPost = posts[0];
+const otherPosts = posts.slice(1);
+
+const featuredImageSrc = featuredPost?.data.heroImage && typeof featuredPost.data.heroImage === 'object'
+  ? featuredPost.data.heroImage.src
+  : featuredPost?.data.heroImage;
+
+const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <BaseHead
+      title={SITE_TITLE}
+      description={SITE_DESCRIPTION}
+      image={featuredPost?.data.heroImage}
+      lang={lang}
+    />
+    <SchemaOrg
+      schema={{
+        type: "website",
+        name: SITE_TITLE,
+        description: SITE_DESCRIPTION,
+        url: `${siteUrl}/${lang}/`,
+      }}
+    />
+    <SchemaOrg
+      schema={{
+        type: "breadcrumb",
+        items: [{ name: t("nav.home"), url: `/${lang}/` }],
+      }}
+    />
+    <style>
+      #hero-cover {
+        background-color: var(--cover-color, #A31621);
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #hero-cover.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.98);
+      }
+      body.hero-open {
+        overflow: hidden;
+      }
+      /* El cover oculta el contenido visualmente pero sin animación de fade */
+      body.hero-open #main-content {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+    <noscript>
+      <style>
+        #hero-cover { display: none !important; }
+        #main-content { opacity: 1 !important; pointer-events: auto !important; }
+        body { overflow: auto !important; }
+        #show-cover-btn { display: none !important; }
+      </style>
+    </noscript>
+  </head>
+  <body class="hero-open">
+    <!-- HERO MODAL: Portada del día -->
+    <section
+      id="hero-cover"
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 py-10"
+      style={`--cover-color: ${COVER_BG_COLOR};`}
+      aria-label={t("hero.show")}
+    >
+      <button
+        id="hero-close"
+        class="absolute top-6 right-6 md:top-10 md:right-10 text-white text-4xl md:text-6xl font-light hover:scale-110 transition-transform z-50 cursor-pointer"
+        aria-label={t("hero.close")}
+      >
+        &times;
+      </button>
+
+      <div
+        id="hero-logo"
+        class="absolute top-4 left-1/2 -translate-x-1/2 md:top-8 text-white text-6xl md:text-8xl lg:text-9xl font-bold bebas-neue-regular tracking-wider z-10"
+      >
+        {SITE_TITLE}
+      </div>
+
+      <div
+        class="flex flex-col items-center justify-center text-center max-w-4xl w-full mt-28 md:mt-36 cursor-pointer"
+        id="hero-content"
+      >
+        {featuredImageSrc && (
+          <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl px-4">
+            <img
+              src={featuredImageSrc}
+              alt={featuredPost.data.title}
+              class="w-full h-auto object-cover shadow-2xl"
+            />
+          </div>
+        )}
+
+        <h1 class="text-white text-3xl md:text-5xl lg:text-7xl font-bold mt-6 md:mt-10 leading-tight px-4">
+          {featuredPost.data.title}
+        </h1>
+
+        <p class="text-white/80 text-xs md:text-sm mt-6 md:mt-8 uppercase tracking-widest">
+          {t("hero.cta")}
+        </p>
+      </div>
+    </section>
+
+    <!-- MAIN CONTENT: Blog -->
+    <div id="main-content">
+      <Header lang={lang} />
+      <main class="grid grid-cols-1 md:grid-cols-12">
+        <div class="col-span-1 md:col-span-12">
+          <MainPost
+            postId={featuredPost.id}
+            imgUrl={featuredImageSrc}
+            imgAlt={featuredPost.data.title}
+            title={featuredPost.data.title}
+            description={featuredPost.data.description}
+            author={featuredPost.data.author}
+            pubDate={featuredPost.data.pubDate}
+            tags={featuredPost.data.tags}
+            lang={lang}
+          />
+          <Divider className="my-12 md:my-[100px]" />
+        </div>
+
+        <section class="col-span-1 md:col-span-8 lg:col-span-9">
+          <HomeBody posts={posts} lang={lang} />
+        </section>
+
+        <section class="col-span-1 md:col-span-4 lg:col-span-3 p-4 md:p-5">
+          <h2 class="text-3xl md:text-5xl lg:text-6xl font-light">{t("home.recent")}</h2>
+          <Divider class="py-4 md:py-6" />
+          <ul>
+            {
+              otherPosts.map((post) => (
+                <>
+                  <li>
+                    <PostBlock
+                      postId={post.id}
+                      img={post.data.heroImage}
+                      title={post.data.title}
+                      description={post.data.description}
+                      pubDate={post.data.pubDate}
+                      author={post.data.author}
+                      tags={post.data.tags}
+                      lang={lang}
+                    />
+                  </li>
+                  <Divider />
+                </>
+              ))
+            }
+          </ul>
+        </section>
+      </main>
+      <Footer lang={lang} />
+    </div>
+
+    <!-- BOTÓN MOSTRAR PORTADA -->
+    <button
+      id="show-cover-btn"
+      class="fixed bottom-6 right-6 z-40 bg-black text-white px-5 py-3 rounded-full shadow-xl hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 text-sm font-medium tracking-wide hidden"
+      aria-label={t("hero.show")}
+    >
+      {t("hero.show")}
+    </button>
+
+    <script is:inline>
+      (function() {
+        const hero = document.getElementById('hero-cover');
+        const closeBtn = document.getElementById('hero-close');
+        const heroContent = document.getElementById('hero-content');
+        const showCoverBtn = document.getElementById('show-cover-btn');
+        const body = document.body;
+        const SESSION_KEY = 'kanaime-cover-shown';
+
+        function closeHero(skipStorage, immediate) {
+          if (!hero) return;
+          if (immediate) {
+            body.classList.add('no-hero-transition');
+          }
+          hero.classList.add('hidden');
+          body.classList.remove('hero-open');
+          var delay = immediate ? 0 : 800;
+          setTimeout(function() {
+            if (hero && hero.parentNode) {
+              hero.style.display = 'none';
+            }
+            if (immediate) {
+              body.classList.remove('no-hero-transition');
+            }
+          }, delay);
+          if (showCoverBtn) showCoverBtn.classList.remove('hidden');
+          if (!skipStorage) {
+            try {
+              sessionStorage.setItem(SESSION_KEY, 'true');
+            } catch (_e) {}
+          }
+        }
+
+        function openHero() {
+          if (!hero) return;
+          hero.style.display = '';
+          // force reflow for transition
+          void hero.offsetWidth;
+          hero.classList.remove('hidden');
+          body.classList.add('hero-open');
+          if (showCoverBtn) showCoverBtn.classList.add('hidden');
+        }
+
+        // Determinar si mostrar u ocultar el cover al cargar
+        const urlParams = new URLSearchParams(window.location.search);
+        const forceShow = urlParams.get('showCover') === '1';
+
+        if (forceShow) {
+          // Limpiar ?showCover=1 de la URL sin recargar
+          window.history.replaceState({}, document.title, window.location.pathname);
+          // El cover se muestra por defecto (body.hero-open, hero sin .hidden)
+          // Solo asegurarnos de que el botón esté oculto
+          if (showCoverBtn) showCoverBtn.classList.add('hidden');
+        } else {
+          const referrer = document.referrer;
+          let isInternal = false;
+          try {
+            if (referrer) {
+              isInternal = new URL(referrer).hostname === location.hostname;
+            }
+          } catch (_e) {}
+
+          if (isInternal) {
+            // Viene de otra página del mismo sitio: ocultar inmediatamente
+            closeHero(true);
+          } else {
+            // Viene de fuera, directo o bookmark
+            try {
+              if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+                closeHero(true);
+              } else {
+                // Primera vez en esta pestaña: mostrar cover, ocultar botón
+                if (showCoverBtn) showCoverBtn.classList.add('hidden');
+              }
+            } catch (_e) {
+              // sessionStorage no disponible: mostrar cover
+              if (showCoverBtn) showCoverBtn.classList.add('hidden');
+            }
+          }
+        }
+
+        if (heroContent) {
+          heroContent.addEventListener('click', function() {
+            closeHero();
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeHero();
+          });
+        }
+
+        if (showCoverBtn) {
+          showCoverBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openHero();
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

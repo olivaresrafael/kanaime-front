@@ -1,13 +1,17 @@
 ---
+import { useTranslations } from "../../i18n/utils";
+const lang = (Astro.params.lang as "es" | "en") || "es";
+const t = useTranslations(lang);
+
 import { getCollection } from "astro:content";
-import BaseHead from "../components/BaseHead.astro";
-import SchemaOrg from "../components/SchemaOrg.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import FormattedDate from "../components/FormattedDate.astro";
-import SkeletonImageNatural from "../components/SkeletonImageNatural.astro";
-import { slugify } from "../utils/slugify";
-import { SITE_TITLE } from "../consts";
+import BaseHead from "../../components/BaseHead.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
+import { slugify } from "../../utils/slugify";
+import { SITE_TITLE } from "../../consts";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -26,12 +30,18 @@ posts.forEach((post) => {
 
 const allTags = Array.from(tagMap.entries());
 const description = `Explora todo el archivo de ${SITE_TITLE}: naturaleza, exploración, cultura, fotografía y perfiles desde Venezuela.`;
----
 
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+---
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
-    <BaseHead title={`Buscar — ${SITE_TITLE}`} description={description} />
+    <BaseHead title={`Buscar — ${SITE_TITLE}`} description={description} lang={lang} />
     <SchemaOrg
       schema={{
         type: "breadcrumb",
@@ -43,7 +53,7 @@ const description = `Explora todo el archivo de ${SITE_TITLE}: naturaleza, explo
     />
   </head>
   <body>
-    <Header />
+    <Header lang={lang} />
 
     <main class="w-full bg-white">
       <!-- Search Header -->
@@ -130,7 +140,7 @@ const description = `Explora todo el archivo de ${SITE_TITLE}: naturaleza, explo
                 data-author={(post.data.author || "").toLowerCase()}
                 data-tags={post.data.tags.map((t) => slugify(t)).join(",")}
               >
-                <a href={`/blog/${post.id}/`} class="block group">
+                <a href={`//blog/${post.id}/`} class="block group">
                   {imgSrc && (
                     <SkeletonImageNatural
                       src={imgSrc}
@@ -183,7 +193,7 @@ const description = `Explora todo el archivo de ${SITE_TITLE}: naturaleza, explo
       </section>
     </main>
 
-    <Footer />
+    <Footer lang={lang} />
 
     <script is:inline>
       (function() {

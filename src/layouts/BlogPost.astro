@@ -7,6 +7,7 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import ReadingTime from "../components/ReadingTime.astro";
 import AuthorBio from "../components/mdx/AuthorBio.astro";
+import { useTranslations } from "../i18n/utils";
 import { slugify } from "../utils/slugify";
 
 type Props = CollectionEntry<"blog">["data"] & {
@@ -14,6 +15,7 @@ type Props = CollectionEntry<"blog">["data"] & {
   tags?: string[];
   canonicalUrl?: string;
   readingTimeMinutes?: number;
+  lang?: "es" | "en";
 };
 
 const {
@@ -28,7 +30,11 @@ const {
   tags,
   canonicalUrl: customCanonicalUrl,
   readingTimeMinutes,
+  lang: propLang,
 } = Astro.props;
+
+const lang = propLang || (Astro.url.pathname.startsWith("/en/") ? "en" : "es");
+const t = useTranslations(lang);
 
 // coverImage = hero del post individual; heroImage = portada para listados/home
 const coverSrc = coverImage && typeof coverImage === "object" ? coverImage.src : coverImage;
@@ -36,18 +42,18 @@ const listHeroSrc = heroImage && typeof heroImage === "object" ? heroImage.src :
 const heroSrc = coverSrc || listHeroSrc;
 const canonicalUrl =
   customCanonicalUrl ||
-  (slug ? new URL(`/blog/${slug}/`, Astro.site).toString() : new URL(Astro.url.pathname, Astro.site).toString());
-const breadcrumbUrl = customCanonicalUrl || (slug ? `/blog/${slug}/` : Astro.url.pathname);
+  (slug ? new URL(`/${lang}/blog/${slug}/`, Astro.site).toString() : new URL(Astro.url.pathname, Astro.site).toString());
+const breadcrumbUrl = customCanonicalUrl || (slug ? `/${lang}/blog/${slug}/` : Astro.url.pathname);
 const primaryTag = tags?.[0];
 
 const allAuthors = await getCollection("authors");
 const authorEntry = author
   ? allAuthors.find((a) => a.data.name.toLowerCase() === author.toLowerCase())
   : undefined;
-const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
+const authorProfileUrl = authorEntry ? `/${lang}/autor/${authorEntry.id}/` : undefined;
 ---
 
-<html lang="es">
+<html lang={lang}>
   <head>
     <BaseHead
       title={`${title} — Kanaimé`}
@@ -60,6 +66,7 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
         author: author || "Kanaimé Editorial",
         tags: tags || [],
       }}
+      lang={lang}
     />
     <SchemaOrg
       schema={{
@@ -80,7 +87,7 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: "/" },
+          { name: t("nav.home"), url: `/${lang}/` },
           { name: title, url: breadcrumbUrl },
         ],
       }}
@@ -175,7 +182,7 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
   </head>
 
   <body>
-    <Header />
+    <Header lang={lang} />
 
     <!-- HERO FULL-WIDTH: aspect-ratio fijo para que la imagen y el gradiente coincidan exactamente -->
     <header class="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] flex items-end overflow-hidden">
@@ -199,7 +206,7 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
         <div class="max-w-5xl">
           {primaryTag && (
             <a
-              href={`/tags/${slugify(primaryTag)}/`}
+              href={`/${lang}/tags/${slugify(primaryTag)}/`}
               class="inline-block text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/70 mb-4 hover:text-white transition-colors"
             >
               {primaryTag}
@@ -239,8 +246,6 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
             {typeof readingTimeMinutes === "number" && (
               <>
                 <span class="hidden md:inline text-white/40">|</span>
-                <ReadingTime content={" "} wordsPerMinute={200} />
-                <!-- Sobrescribimos el span con el valor exacto -->
                 <span class="text-xs uppercase tracking-[0.2em] text-white/70">{readingTimeMinutes} min de lectura</span>
               </>
             )}
@@ -276,7 +281,7 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
             <div class="flex flex-wrap gap-3">
               {tags.map((tag) => (
                 <a
-                  href={`/tags/${slugify(tag)}/`}
+                  href={`/${lang}/tags/${slugify(tag)}/`}
                   class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
                 >
                   {tag}
@@ -287,10 +292,10 @@ const authorProfileUrl = authorEntry ? `/autor/${authorEntry.id}/` : undefined;
         )}
 
         <!-- Author Bio -->
-        {author && <AuthorBio authorName={author} />}
+        <AuthorBio authorName={author || "Kanaimé Editorial"} lang={lang} />
       </article>
     </main>
 
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>
