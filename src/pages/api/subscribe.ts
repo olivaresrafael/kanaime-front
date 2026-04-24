@@ -9,16 +9,9 @@ export const prerender = false;
  * Suscribe un email a MailerLite usando su API REST.
  * Requiere MAILERLITE_API_KEY en las variables de entorno.
  */
-export const POST: APIRoute = async ({ request, locals }) => {
-  // Leer API key desde runtime (Cloudflare) o process.env (local)
-  const runtime = (locals as any)?.runtime;
-  const apiKey =
-    runtime?.env?.MAILERLITE_API_KEY ||
-    (typeof process !== "undefined" ? process.env.MAILERLITE_API_KEY : "");
-
-  const groupId =
-    runtime?.env?.MAILERLITE_GROUP_ID ||
-    (typeof process !== "undefined" ? process.env.MAILERLITE_GROUP_ID : "");
+export const POST: APIRoute = async ({ request }) => {
+  const apiKey = import.meta.env.MAILERLITE_API_KEY;
+  const groupId = import.meta.env.MAILERLITE_GROUP_ID;
 
   if (!apiKey) {
     return new Response(
