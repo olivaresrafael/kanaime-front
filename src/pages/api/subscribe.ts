@@ -4,9 +4,10 @@ export const prerender = false;
 
 /**
  * POST /api/subscribe
- * Body: { email: string }
+ * Body: { email: string, lang?: "es" | "en" }
  *
  * Suscribe un email a MailerLite usando su API REST.
+ * Guarda el idioma del suscriptor en el campo personalizado "language".
  * Requiere MAILERLITE_API_KEY en las variables de entorno.
  */
 export const POST: APIRoute = async ({ request }) => {
@@ -20,7 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  let body: { email?: string };
+  let body: { email?: string; lang?: "es" | "en" };
   try {
     body = await request.json();
   } catch {
@@ -31,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const email = body?.email?.trim();
+  const lang = body?.lang;
   if (!email || !email.includes("@")) {
     return new Response(
       JSON.stringify({ error: "Valid email is required" }),
@@ -39,6 +41,9 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const payload: Record<string, any> = { email };
+  if (lang) {
+    payload.fields = { language: lang };
+  }
   if (groupId) {
     payload.groups = [groupId];
   }
