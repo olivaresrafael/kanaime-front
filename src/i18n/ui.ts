@@ -69,6 +69,12 @@ export const ui = {
     "footer.tagline": "Naturaleza, exploración y cultura desde el corazón de Venezuela.",
     "footer.rights": "Todos los derechos reservados.",
     "footer.madeIn": "Hecho con pasión en Venezuela.",
+
+    "newsletter.title": "Suscríbete",
+    "newsletter.subtitle": "Recibe nuestras historias directamente en tu correo. Sin spam, solo exploración.",
+    "newsletter.placeholder": "Tu correo electrónico",
+    "newsletter.button": "Suscribirse",
+    "newsletter.success": "¡Gracias! Revisa tu correo para confirmar.",
   },
   en: {
     "site.title": "Kanaimé",
@@ -136,6 +142,12 @@ export const ui = {
     "footer.tagline": "Nature, exploration, and culture from the heart of Venezuela.",
     "footer.rights": "All rights reserved.",
     "footer.madeIn": "Made with passion in Venezuela.",
+
+    "newsletter.title": "Subscribe",
+    "newsletter.subtitle": "Get our stories delivered straight to your inbox. No spam, just exploration.",
+    "newsletter.placeholder": "Your email address",
+    "newsletter.button": "Subscribe",
+    "newsletter.success": "Thank you! Check your email to confirm.",
   },
 } as const;
 

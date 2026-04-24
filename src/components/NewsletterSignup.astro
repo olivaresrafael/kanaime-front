@@ -1,0 +1,97 @@
+---
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang: "es" | "en";
+  formAction?: string; // URL del servicio de newsletter (ej: Mailchimp, Buttondown, etc.)
+}
+
+const { lang, formAction } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="my-16 md:my-24">
+  <div class="bg-[#1a1a1a] p-8 md:p-12 lg:p-16 text-center">
+    <h3
+      class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+      style="font-family: 'Bebas Neue', sans-serif;"
+    >
+      {t("newsletter.title")}
+    </h3>
+    <p
+      class="text-base md:text-lg font-light text-white/70 max-w-xl mx-auto mb-8 leading-relaxed"
+      style="font-family: 'Source Serif 4', serif;"
+    >
+      {t("newsletter.subtitle")}
+    </p>
+
+    {formAction ? (
+      <form
+        action={formAction}
+        method="POST"
+        class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+        target="_blank"
+      >
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder={t("newsletter.placeholder")}
+          class="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm tracking-wide focus:outline-none focus:border-[#A31621] transition-colors"
+        />
+        <button
+          type="submit"
+          class="px-8 py-3 bg-[#A31621] text-white text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#8a121c] transition-colors shrink-0"
+        >
+          {t("newsletter.button")}
+        </button>
+      </form>
+    ) : (
+      <div
+        class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+        id="newsletter-fallback"
+      >
+        <input
+          type="email"
+          id="newsletter-email"
+          placeholder={t("newsletter.placeholder")}
+          class="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm tracking-wide focus:outline-none focus:border-[#A31621] transition-colors"
+        />
+        <button
+          type="button"
+          id="newsletter-btn"
+          class="px-8 py-3 bg-[#A31621] text-white text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#8a121c] transition-colors shrink-0"
+        >
+          {t("newsletter.button")}
+        </button>
+      </div>
+      <p
+        id="newsletter-msg"
+        class="mt-4 text-sm text-white/60 hidden"
+        style="font-family: 'Source Serif 4', serif;"
+      >
+        {t("newsletter.success")}
+      </p>
+      <script is:inline>
+        (function () {
+          const btn = document.getElementById("newsletter-btn");
+          const input = document.getElementById("newsletter-email");
+          const msg = document.getElementById("newsletter-msg");
+          if (!btn || !input || !msg) return;
+          btn.addEventListener("click", function () {
+            const email = input.value.trim();
+            if (email && email.includes("@")) {
+              msg.classList.remove("hidden");
+              input.value = "";
+              setTimeout(function () {
+                msg.classList.add("hidden");
+              }, 5000);
+            } else {
+              input.focus();
+            }
+          });
+        })();
+      </script>
+    )}
+  </div>
+</div>

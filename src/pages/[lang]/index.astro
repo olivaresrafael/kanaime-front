@@ -9,6 +9,7 @@ import PostBlock from "../../components/PostBlock.astro";
 import HomeBody from "../../components/HomeBody.astro";
 import Divider from "../../components/Divider.astro";
 import Sidebar from "../../components/sidebar/Sidebar.astro";
+import NewsletterSignup from "../../components/NewsletterSignup.astro";
 import { useTranslations } from "../../i18n/utils";
 import { SITE_TITLE, SITE_DESCRIPTION, COVER_BG_COLOR } from "../../consts";
 
@@ -171,6 +172,7 @@ export async function getStaticPaths() {
 
         <section class="col-span-1 md:col-span-8 lg:col-span-9">
           <HomeBody posts={posts} lang={lang} />
+          <NewsletterSignup lang={lang} />
         </section>
 
         <section class="col-span-1 md:col-span-4 lg:col-span-3 p-4 md:p-5">
