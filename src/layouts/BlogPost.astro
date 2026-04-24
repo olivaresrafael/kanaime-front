@@ -8,6 +8,7 @@ import FormattedDate from "../components/FormattedDate.astro";
 import ReadingTime from "../components/ReadingTime.astro";
 import AuthorBio from "../components/mdx/AuthorBio.astro";
 import Lightbox from "../components/mdx/Lightbox.astro";
+import Sidebar from "../components/sidebar/Sidebar.astro";
 import { useTranslations } from "../i18n/utils";
 import { slugify } from "../utils/slugify";
 
@@ -52,6 +53,10 @@ const authorEntry = author
   ? allAuthors.find((a) => a.data.name.toLowerCase() === author.toLowerCase())
   : undefined;
 const authorProfileUrl = authorEntry ? `/${lang}/autor/${authorEntry.id}/` : undefined;
+
+// Posts del mismo idioma para el sidebar
+const allPosts = await getCollection("blog");
+const langPosts = allPosts.filter((p) => p.data.lang === lang);
 ---
 
 <html lang={lang}>
@@ -257,44 +262,54 @@ const authorProfileUrl = authorEntry ? `/${lang}/autor/${authorEntry.id}/` : und
 
     <!-- ARTICLE BODY -->
     <main class="w-full bg-white">
-      <article
-        class="max-w-[52rem] mx-auto px-6 md:px-8 py-12 md:py-20"
-        itemscope
-        itemtype="https://schema.org/Article"
-      >
-        <!-- Lead / Description -->
-        <p
-          class="text-xl md:text-2xl font-light leading-relaxed text-gray-700 mb-12 md:mb-16"
-          style="font-family: 'Source Serif 4', serif;"
-          itemprop="description"
-        >
-          {description}
-        </p>
+      <div class="max-w-[80rem] mx-auto px-6 md:px-8 lg:px-12 py-12 md:py-20">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
+          <!-- Columna principal: artículo -->
+          <article itemscope itemtype="https://schema.org/Article">
+            <!-- Lead / Description -->
+            <p
+              class="text-xl md:text-2xl font-light leading-relaxed text-gray-700 mb-12 md:mb-16"
+              style="font-family: 'Source Serif 4', serif;"
+              itemprop="description"
+            >
+              {description}
+            </p>
 
-        <div class="article-body text-lg md:text-xl font-light text-gray-800" itemprop="articleBody">
-          <slot />
-        </div>
-
-        <!-- Tags -->
-        {tags && tags.length > 0 && (
-          <div class="mt-16 pt-8 border-t border-gray-100">
-            <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">Etiquetas</p>
-            <div class="flex flex-wrap gap-3">
-              {tags.map((tag) => (
-                <a
-                  href={`/${lang}/tags/${slugify(tag)}/`}
-                  class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
-                >
-                  {tag}
-                </a>
-              ))}
+            <div class="article-body text-lg md:text-xl font-light text-gray-800" itemprop="articleBody">
+              <slot />
             </div>
-          </div>
-        )}
 
-        <!-- Author Bio -->
-        <AuthorBio authorName={author || "Kanaimé Editorial"} lang={lang} />
-      </article>
+            <!-- Tags -->
+            {tags && tags.length > 0 && (
+              <div class="mt-16 pt-8 border-t border-gray-100">
+                <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">Etiquetas</p>
+                <div class="flex flex-wrap gap-3">
+                  {tags.map((tag) => (
+                    <a
+                      href={`/${lang}/tags/${slugify(tag)}/`}
+                      class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
+                    >
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Author Bio -->
+            <AuthorBio authorName={author || "Kanaimé Editorial"} lang={lang} />
+          </article>
+
+          <Sidebar
+            lang={lang}
+            mode="detail"
+            widgets={["authors", "related", "recent", "tags", "featured", "random", "archive"]}
+            posts={langPosts}
+            currentPostId={slug}
+            currentTags={tags}
+          />
+        </div>
+      </div>
     </main>
 
     <Footer lang={lang} />

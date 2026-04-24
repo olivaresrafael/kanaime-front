@@ -25,6 +25,15 @@ export const ui = {
 
     "home.recent": "Recientes -",
 
+    "sidebar.recent": "Recientes",
+    "sidebar.popularTags": "Tags populares",
+    "sidebar.featured": "Destacado",
+    "sidebar.related": "Relacionados",
+    "sidebar.random": "Descubrir",
+    "sidebar.archive": "Archivo",
+    "sidebar.moreFromAuthor": "Más de este autor",
+    "sidebar.allAuthors": "Autores",
+
     "search.title": "Buscar",
     "search.placeholder": "Buscar artículos...",
     "search.all": "Todos",
@@ -82,6 +91,15 @@ export const ui = {
     "hero.show": "Cover",
 
     "home.recent": "Recent -",
+
+    "sidebar.recent": "Recent",
+    "sidebar.popularTags": "Popular tags",
+    "sidebar.featured": "Featured",
+    "sidebar.related": "Related",
+    "sidebar.random": "Discover",
+    "sidebar.archive": "Archive",
+    "sidebar.moreFromAuthor": "More from this author",
+    "sidebar.allAuthors": "Authors",
 
     "search.title": "Search",
     "search.placeholder": "Search articles...",

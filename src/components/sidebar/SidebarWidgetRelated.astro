@@ -1,0 +1,89 @@
+---
+// Widget: Artículos relacionados (por tags en común)
+import { useTranslations } from "../../i18n/utils";
+import FormattedDate from "../FormattedDate.astro";
+
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    heroImage?: any;
+    tags?: string[];
+  };
+}
+
+interface Props {
+  lang: "es" | "en";
+  mode?: "simple" | "detail";
+  posts: Post[];
+  currentPostId: string;
+  currentTags?: string[];
+  limit?: number;
+}
+
+const { lang, mode = "simple", posts, currentPostId, currentTags = [], limit = 4 } = Astro.props;
+const t = useTranslations(lang);
+
+// Encontrar posts que compartan al menos un tag
+const related = posts
+  .filter((p) => p.id !== currentPostId)
+  .map((post) => {
+    const commonTags = (post.data.tags || []).filter((tag) =>
+      currentTags.includes(tag)
+    );
+    return { post, commonTags: commonTags.length };
+  })
+  .filter((item) => item.commonTags > 0)
+  .sort((a, b) => b.commonTags - a.commonTags)
+  .slice(0, limit)
+  .map((item) => item.post);
+
+if (related.length === 0) return;
+---
+
+<div>
+  <h3
+    class="text-sm uppercase tracking-[0.25em] text-gray-400 mb-6"
+    style="font-family: 'Bebas Neue', sans-serif;"
+  >
+    {t("sidebar.related")}
+  </h3>
+
+  <div class="space-y-5">
+    {
+      related.map((post) => {
+        const imgSrc =
+          post.data.heroImage && typeof post.data.heroImage === "object"
+            ? post.data.heroImage.src
+            : post.data.heroImage;
+        return (
+          <a href={`/${lang}/blog/${post.id}/`} class="group block">
+            {mode === "detail" && imgSrc && (
+              <div class="overflow-hidden mb-2 bg-gray-100">
+                <img
+                  src={imgSrc}
+                  alt={post.data.title}
+                  class="w-full h-20 object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <h4
+              class="text-sm font-light leading-snug group-hover:text-[#A31621] transition-colors"
+              style="font-family: 'Source Serif 4', serif;"
+            >
+              {post.data.title}
+            </h4>
+            {mode === "detail" && (
+              <div class="mt-1 text-[10px] uppercase tracking-wider text-gray-400">
+                <FormattedDate date={post.data.pubDate} />
+              </div>
+            )}
+          </a>
+        );
+      })
+    }
+  </div>
+</div>

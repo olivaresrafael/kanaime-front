@@ -1,0 +1,86 @@
+---
+// Widget: Autores y sus artículos
+import { getCollection } from "astro:content";
+import { useTranslations } from "../../i18n/utils";
+
+interface Props {
+  lang: "es" | "en";
+  mode?: "simple" | "detail";
+  currentPostId?: string;
+}
+
+const { lang, mode = "simple", currentPostId } = Astro.props;
+const t = useTranslations(lang);
+
+const allAuthors = await getCollection("authors");
+const allPosts = await getCollection("blog");
+const langPosts = allPosts.filter((p) => p.data.lang === lang);
+
+// Agrupar posts por autor (excluyendo Kanaimé Editorial)
+const postsByAuthor = new Map<string, typeof langPosts>();
+for (const post of langPosts) {
+  const postAuthor = post.data.author || "Kanaimé Editorial";
+  if (postAuthor === "Kanaimé Editorial") continue;
+  if (!postsByAuthor.has(postAuthor)) {
+    postsByAuthor.set(postAuthor, []);
+  }
+  postsByAuthor.get(postAuthor)!.push(post);
+}
+
+const sortedAuthors = Array.from(postsByAuthor.keys()).sort((a, b) =>
+  a.localeCompare(b)
+);
+---
+
+<div>
+  <h3
+    class="text-sm uppercase tracking-[0.25em] text-gray-400 mb-6"
+    style="font-family: 'Bebas Neue', sans-serif;"
+  >
+    {t("sidebar.allAuthors")}
+  </h3>
+
+  <div class="space-y-8">
+    {
+      sortedAuthors.map((authorName) => {
+        const aEntry = allAuthors.find(
+          (a) => a.data.name.toLowerCase() === authorName.toLowerCase()
+        );
+        const aId = aEntry?.id;
+        const authorPosts = postsByAuthor.get(authorName) || [];
+        return (
+          <div>
+            <h4
+              class="text-base font-bold mb-2"
+              style="font-family: 'Bebas Neue', sans-serif;"
+            >
+              {aId ? (
+                <a
+                  href={`/${lang}/autor/${aId}/`}
+                  class="hover:text-[#A31621] transition-colors"
+                >
+                  {authorName}
+                </a>
+              ) : (
+                <span>{authorName}</span>
+              )}
+            </h4>
+            <ul class="space-y-1.5">
+              {authorPosts.map((post) => (
+                <li>
+                  <a
+                    href={`/${lang}/blog/${post.id}/`}
+                    class={`text-sm font-light leading-snug hover:text-[#A31621] transition-colors ${post.id === currentPostId ? "text-[#A31621]" : "text-gray-600"}`}
+                    style="font-family: 'Source Serif 4', serif;"
+                  >
+                    {post.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

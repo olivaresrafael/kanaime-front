@@ -1,0 +1,123 @@
+---
+// Componente Sidebar principal — widgets activables
+import SidebarWidgetAuthors from "./SidebarWidgetAuthors.astro";
+import SidebarWidgetRecent from "./SidebarWidgetRecent.astro";
+import SidebarWidgetTags from "./SidebarWidgetTags.astro";
+import SidebarWidgetFeatured from "./SidebarWidgetFeatured.astro";
+import SidebarWidgetRelated from "./SidebarWidgetRelated.astro";
+import SidebarWidgetRandom from "./SidebarWidgetRandom.astro";
+import SidebarWidgetArchive from "./SidebarWidgetArchive.astro";
+
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    heroImage?: any;
+    author?: string;
+    tags?: string[];
+    lang?: "es" | "en";
+  };
+}
+
+interface Props {
+  lang: "es" | "en";
+  widgets: (
+    | "authors"
+    | "recent"
+    | "tags"
+    | "featured"
+    | "related"
+    | "random"
+    | "archive"
+  )[];
+  mode?: "simple" | "detail";
+  posts: Post[];
+  currentPostId?: string;
+  currentTags?: string[];
+}
+
+const {
+  lang,
+  widgets,
+  mode = "simple",
+  posts,
+  currentPostId,
+  currentTags,
+} = Astro.props;
+---
+
+<aside class="lg:sticky lg:top-8 lg:self-start">
+  <div class="border-l border-gray-200 pl-8 space-y-12">
+    {
+      widgets.map((widget) => {
+        switch (widget) {
+          case "authors":
+            return (
+              <SidebarWidgetAuthors
+                lang={lang}
+                mode={mode}
+                currentPostId={currentPostId}
+              />
+            );
+          case "recent":
+            return (
+              <SidebarWidgetRecent
+                lang={lang}
+                mode={mode}
+                posts={posts}
+                currentPostId={currentPostId}
+              />
+            );
+          case "tags":
+            return (
+              <SidebarWidgetTags
+                lang={lang}
+                mode={mode}
+                posts={posts}
+              />
+            );
+          case "featured":
+            return (
+              <SidebarWidgetFeatured
+                lang={lang}
+                mode={mode}
+                posts={posts}
+                currentPostId={currentPostId}
+              />
+            );
+          case "related":
+            return currentPostId && currentTags && currentTags.length > 0 ? (
+              <SidebarWidgetRelated
+                lang={lang}
+                mode={mode}
+                posts={posts}
+                currentPostId={currentPostId}
+                currentTags={currentTags}
+              />
+            ) : null;
+          case "random":
+            return (
+              <SidebarWidgetRandom
+                lang={lang}
+                mode={mode}
+                posts={posts}
+                currentPostId={currentPostId}
+              />
+            );
+          case "archive":
+            return (
+              <SidebarWidgetArchive
+                lang={lang}
+                mode={mode}
+                posts={posts}
+              />
+            );
+          default:
+            return null;
+        }
+      })
+    }
+  </div>
+</aside>

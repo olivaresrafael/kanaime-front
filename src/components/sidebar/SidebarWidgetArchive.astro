@@ -1,0 +1,83 @@
+---
+// Widget: Archivo por año
+import { useTranslations } from "../../i18n/utils";
+
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    pubDate: Date;
+  };
+}
+
+interface Props {
+  lang: "es" | "en";
+  mode?: "simple" | "detail";
+  posts: Post[];
+}
+
+const { lang, mode = "simple", posts } = Astro.props;
+const t = useTranslations(lang);
+
+// Agrupar por año
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.pubDate.getFullYear();
+  if (!byYear.has(year)) {
+    byYear.set(year, []);
+  }
+  byYear.get(year)!.push(post);
+}
+
+const sortedYears = Array.from(byYear.keys()).sort((a, b) => b - a);
+---
+
+<div>
+  <h3
+    class="text-sm uppercase tracking-[0.25em] text-gray-400 mb-6"
+    style="font-family: 'Bebas Neue', sans-serif;"
+  >
+    {t("sidebar.archive")}
+  </h3>
+
+  <div class="space-y-4">
+    {
+      sortedYears.map((year) => {
+        const yearPosts = byYear.get(year) || [];
+        return (
+          <div>
+            <h4
+              class="text-xs uppercase tracking-widest text-gray-400 mb-2"
+              style="font-family: 'Bebas Neue', sans-serif;"
+            >
+              {year}
+              {mode === "detail" && (
+                <span class="text-gray-300 ml-1">({yearPosts.length})</span>
+              )}
+            </h4>
+            {mode === "detail" && (
+              <ul class="space-y-1">
+                {yearPosts.slice(0, 3).map((post) => (
+                  <li>
+                    <a
+                      href={`/${lang}/blog/${post.id}/`}
+                      class="text-sm font-light text-gray-600 hover:text-[#A31621] transition-colors"
+                      style="font-family: 'Source Serif 4', serif;"
+                    >
+                      {post.data.title}
+                    </a>
+                  </li>
+                ))}
+                {yearPosts.length > 3 && (
+                  <li class="text-xs text-gray-400">
+                    +{yearPosts.length - 3} {lang === "es" ? "más" : "more"}
+                  </li>
+                )}
+              </ul>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

@@ -1,0 +1,82 @@
+---
+// Widget: Post aleatorio para descubrir
+import { useTranslations } from "../../i18n/utils";
+import FormattedDate from "../FormattedDate.astro";
+
+interface Post {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    heroImage?: any;
+    author?: string;
+    tags?: string[];
+  };
+}
+
+interface Props {
+  lang: "es" | "en";
+  mode?: "simple" | "detail";
+  posts: Post[];
+  currentPostId?: string;
+}
+
+const { lang, mode = "simple", posts, currentPostId } = Astro.props;
+const t = useTranslations(lang);
+
+const candidates = posts.filter((p) => p.id !== currentPostId);
+if (candidates.length === 0) return;
+
+// Seed basado en la fecha para que cambie diariamente
+const today = new Date();
+const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+const randomIndex = seed % candidates.length;
+const randomPost = candidates[randomIndex];
+
+const imgSrc =
+  randomPost.data.heroImage && typeof randomPost.data.heroImage === "object"
+    ? randomPost.data.heroImage.src
+    : randomPost.data.heroImage;
+---
+
+<div>
+  <h3
+    class="text-sm uppercase tracking-[0.25em] text-gray-400 mb-6"
+    style="font-family: 'Bebas Neue', sans-serif;"
+  >
+    {t("sidebar.random")}
+  </h3>
+
+  <a href={`/${lang}/blog/${randomPost.id}/`} class="group block">
+    {mode === "detail" && imgSrc && (
+      <div class="overflow-hidden mb-3 bg-gray-100">
+        <img
+          src={imgSrc}
+          alt={randomPost.data.title}
+          class="w-full h-28 object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+          loading="lazy"
+        />
+      </div>
+    )}
+    <h4
+      class="text-base font-bold leading-snug group-hover:text-[#A31621] transition-colors mb-2"
+      style="font-family: 'Bebas Neue', sans-serif;"
+    >
+      {randomPost.data.title}
+    </h4>
+    <p
+      class="text-sm font-light leading-relaxed text-gray-600 line-clamp-3"
+      style="font-family: 'Source Serif 4', serif;"
+    >
+      {randomPost.data.description}
+    </p>
+    {mode === "detail" && (
+      <div class="mt-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-gray-400">
+        {randomPost.data.author && <span>{randomPost.data.author}</span>}
+        <span>|</span>
+        <FormattedDate date={randomPost.data.pubDate} />
+      </div>
+    )}
+  </a>
+</div>

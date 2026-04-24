@@ -1,0 +1,59 @@
+---
+// Widget: Tags populares
+import { useTranslations } from "../../i18n/utils";
+import { slugify } from "../../utils/slugify";
+
+interface Post {
+  id: string;
+  data: {
+    tags?: string[];
+  };
+}
+
+interface Props {
+  lang: "es" | "en";
+  mode?: "simple" | "detail";
+  posts: Post[];
+  limit?: number;
+}
+
+const { lang, mode = "simple", posts, limit = 8 } = Astro.props;
+const t = useTranslations(lang);
+
+// Contar artículos por tag
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags || []) {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  }
+}
+
+const sortedTags = Array.from(tagCounts.entries())
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, limit);
+---
+
+<div>
+  <h3
+    class="text-sm uppercase tracking-[0.25em] text-gray-400 mb-6"
+    style="font-family: 'Bebas Neue', sans-serif;"
+  >
+    {t("sidebar.popularTags")}
+  </h3>
+
+  <div class="flex flex-wrap gap-2">
+    {
+      sortedTags.map(([tag, count]) => (
+        <a
+          href={`/${lang}/tags/${slugify(tag)}/`}
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
+        >
+          <span>{tag}</span>
+          {mode === "detail" && (
+            <span class="text-gray-300 text-[10px]">({count})</span>
+          )}
+        </a>
+      ))
+    }
+  </div>
+</div>
