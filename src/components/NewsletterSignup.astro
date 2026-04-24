@@ -3,10 +3,9 @@ import { useTranslations } from "../i18n/utils";
 
 interface Props {
   lang: "es" | "en";
-  formAction?: string; // URL del servicio de newsletter (ej: Mailchimp, Buttondown, etc.)
 }
 
-const { lang, formAction } = Astro.props;
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -25,73 +24,92 @@ const t = useTranslations(lang);
       {t("newsletter.subtitle")}
     </p>
 
-    {formAction ? (
-      <form
-        action={formAction}
-        method="POST"
-        class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-        target="_blank"
+    <form
+      id="newsletter-form"
+      class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+      onsubmit="return false;"
+    >
+      <input
+        type="email"
+        id="newsletter-email"
+        name="email"
+        required
+        placeholder={t("newsletter.placeholder")}
+        class="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm tracking-wide focus:outline-none focus:border-[#A31621] transition-colors"
+      />
+      <button
+        type="submit"
+        id="newsletter-btn"
+        class="px-8 py-3 bg-[#A31621] text-white text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#8a121c] transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder={t("newsletter.placeholder")}
-          class="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm tracking-wide focus:outline-none focus:border-[#A31621] transition-colors"
-        />
-        <button
-          type="submit"
-          class="px-8 py-3 bg-[#A31621] text-white text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#8a121c] transition-colors shrink-0"
-        >
-          {t("newsletter.button")}
-        </button>
-      </form>
-    ) : (
-      <div
-        class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-        id="newsletter-fallback"
-      >
-        <input
-          type="email"
-          id="newsletter-email"
-          placeholder={t("newsletter.placeholder")}
-          class="flex-1 px-5 py-3 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm tracking-wide focus:outline-none focus:border-[#A31621] transition-colors"
-        />
-        <button
-          type="button"
-          id="newsletter-btn"
-          class="px-8 py-3 bg-[#A31621] text-white text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#8a121c] transition-colors shrink-0"
-        >
-          {t("newsletter.button")}
-        </button>
-      </div>
-      <p
-        id="newsletter-msg"
-        class="mt-4 text-sm text-white/60 hidden"
-        style="font-family: 'Source Serif 4', serif;"
-      >
-        {t("newsletter.success")}
-      </p>
-      <script is:inline>
-        (function () {
-          const btn = document.getElementById("newsletter-btn");
-          const input = document.getElementById("newsletter-email");
-          const msg = document.getElementById("newsletter-msg");
-          if (!btn || !input || !msg) return;
-          btn.addEventListener("click", function () {
-            const email = input.value.trim();
-            if (email && email.includes("@")) {
-              msg.classList.remove("hidden");
-              input.value = "";
-              setTimeout(function () {
-                msg.classList.add("hidden");
-              }, 5000);
-            } else {
-              input.focus();
-            }
-          });
-        })();
-      </script>
-    )}
+        {t("newsletter.button")}
+      </button>
+    </form>
+
+    <p
+      id="newsletter-success"
+      class="mt-4 text-sm text-white/60 hidden"
+      style="font-family: 'Source Serif 4', serif;"
+    >
+      {t("newsletter.success")}
+    </p>
+
+    <p
+      id="newsletter-error"
+      class="mt-4 text-sm text-red-400 hidden"
+      style="font-family: 'Source Serif 4', serif;"
+    >
+      Error. Intenta de nuevo más tarde.
+    </p>
   </div>
 </div>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById("newsletter-form");
+    const input = document.getElementById("newsletter-email");
+    const btn = document.getElementById("newsletter-btn");
+    const successMsg = document.getElementById("newsletter-success");
+    const errorMsg = document.getElementById("newsletter-error");
+
+    if (!form || !input || !btn) return;
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = input.value.trim();
+      if (!email || !email.includes("@")) {
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "...";
+      successMsg.classList.add("hidden");
+      errorMsg.classList.add("hidden");
+
+      try {
+        const res = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        if (res.ok) {
+          input.value = "";
+          successMsg.classList.remove("hidden");
+        } else {
+          errorMsg.classList.remove("hidden");
+        }
+      } catch (_err) {
+        errorMsg.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent =
+          document.documentElement.lang === "es"
+            ? "Suscribirse"
+            : "Subscribe";
+      }
+    });
+  })();
+</script>
