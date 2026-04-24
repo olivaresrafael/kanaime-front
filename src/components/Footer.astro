@@ -18,7 +18,7 @@ const t = useTranslations(lang);
         <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-6 bebas-neue-regular">{t("footer.navigation")}</h3>
         <ul class="space-y-3">
           <li><a href={`/${lang}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.home")}</a></li>
-          <li><a href={`/${lang}/about/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.about")}</a></li>
+          <li><a href={`/${lang}/autores/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.authors")}</a></li>
           <li><a href={`/${lang}/sponsors/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.sponsors")}</a></li>
           <li><a href="/rss.xml" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">RSS</a></li>
         </ul>
@@ -46,10 +46,10 @@ const t = useTranslations(lang);
 
     <div class="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
       <p class="text-sm text-gray-400 source-serif-4-font">
-        &copy; {new Date().getFullYear()} {SITE_TITLE}. Todos los derechos reservados.
+        &copy; {new Date().getFullYear()} {SITE_TITLE}. {t("footer.rights")}
       </p>
       <p class="text-sm text-gray-400 source-serif-4-font">
-        Hecho con pasión en Venezuela.
+        {t("footer.madeIn")}
       </p>
     </div>
   </div>
