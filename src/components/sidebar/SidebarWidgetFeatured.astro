@@ -24,6 +24,7 @@ interface Props {
 
 const { lang, mode = "simple", posts, currentPostId } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 
 // Usar el post más reciente que no sea el actual
 const featured = posts
@@ -46,7 +47,7 @@ const imgSrc =
     {t("sidebar.featured")}
   </h3>
 
-  <a href={`/${lang}/blog/${featured.id}/`} class="group block">
+  <a href={`${basePath}/blog/${featured.id}/`} class="group block">
     {mode === "detail" && imgSrc && (
       <div class="overflow-hidden mb-3 bg-gray-100">
         <img

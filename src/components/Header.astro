@@ -11,32 +11,33 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 ---
 
 <header>
   <nav>
     <h2 class="text-8xl font-bold text-right pt-10 pb-6">
-      <a href={`/${lang}/`}>{SITE_TITLE}</a>
+      <a href={`${basePath}/`}>{SITE_TITLE}</a>
     </h2>
     <div class="internal-links">
       <HeaderLink
-        href={`/${lang}/tags/${lang === "es" ? "naturaleza" : "nature"}/`}
+        href={`${basePath}/tags/${lang === "es" ? "naturaleza" : "nature"}/`}
         >{t("nav.nature")}</HeaderLink
       >
       <HeaderLink
-        href={`/${lang}/tags/${lang === "es" ? "exploracion" : "exploration"}/`}
+        href={`${basePath}/tags/${lang === "es" ? "exploracion" : "exploration"}/`}
         >{t("nav.exploration")}</HeaderLink
       >
       <HeaderLink
-        href={`/${lang}/tags/${lang === "es" ? "cultura" : "culture"}/`}
+        href={`${basePath}/tags/${lang === "es" ? "cultura" : "culture"}/`}
         >{t("nav.culture")}</HeaderLink
       >
       <HeaderLink
-        href={`/${lang}/tags/${lang === "es" ? "fotografia" : "photography"}/`}
+        href={`${basePath}/tags/${lang === "es" ? "fotografia" : "photography"}/`}
         >{t("nav.photography")}</HeaderLink
       >
       <HeaderLink
-        href={`/${lang}/tags/${lang === "es" ? "perfiles" : "profiles"}/`}
+        href={`${basePath}/tags/${lang === "es" ? "perfiles" : "profiles"}/`}
         >{t("nav.profiles")}</HeaderLink
       >
     </div>
@@ -45,11 +46,11 @@ const t = useTranslations(lang);
         <LanguageSwitcher lang={lang} />
       </div>
       <div class="internal-links">
-        <HeaderLink href={`/${lang}/`}>{t("nav.home")}</HeaderLink>
-        <HeaderLink href={`/${lang}/autores/`}>{t("nav.authors")}</HeaderLink>
-        <HeaderLink href={`/${lang}/sponsors/`}>{t("nav.sponsors")}</HeaderLink>
+        <HeaderLink href={`${basePath}/`}>{t("nav.home")}</HeaderLink>
+        <HeaderLink href={`${basePath}/autores/`}>{t("nav.authors")}</HeaderLink>
+        <HeaderLink href={`${basePath}/sponsors/`}>{t("nav.sponsors")}</HeaderLink>
         <a
-          href={`/${lang}/search/`}
+          href={`${basePath}/search/`}
           aria-label={t("nav.search")}
           class="search-link"
         >

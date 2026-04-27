@@ -13,20 +13,18 @@ export async function getStaticPaths() {
   const posts = await getCollection("blog");
 
   const paths: Array<{
-    params: { lang: string; slug: string };
+    params: { slug: string };
     props: { author: CollectionEntry<"authors">; posts: CollectionEntry<"blog">[] };
   }> = [];
 
   authors.forEach((author) => {
-    ["es", "en"].forEach((lang) => {
-      const authorPosts = posts
-        .filter((p) => p.data.author?.toLowerCase() === author.data.name.toLowerCase() && p.data.lang === lang)
-        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    const authorPosts = posts
+      .filter((p) => p.data.author?.toLowerCase() === author.data.name.toLowerCase() && p.data.lang === "en")
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-      paths.push({
-        params: { lang, slug: author.id },
-        props: { author, posts: authorPosts },
-      });
+    paths.push({
+      params: { slug: author.id },
+      props: { author, posts: authorPosts },
     });
   });
 
@@ -39,7 +37,7 @@ type Props = {
 };
 
 const { author, posts } = Astro.props;
-const lang = (Astro.params.lang as "es" | "en") || "es";
+const lang = "en";
 const photoSrc = author.data.photo && typeof author.data.photo === "object"
   ? author.data.photo.src
   : author.data.photo;
@@ -61,16 +59,16 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
         type: "website",
         name: `${author.data.name} — ${SITE_TITLE}`,
         description: author.data.bio,
-        url: `${siteUrl}/${lang}/autor/${author.id}/`,
+        url: `${siteUrl}/en/autor/${author.id}/`,
       }}
     />
     <SchemaOrg
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: `/${lang}/` },
-          { name: "Autores", url: `/${lang}/autores/` },
-          { name: author.data.name, url: `/${lang}/autor/${author.id}/` },
+          { name: "Inicio", url: `/en/` },
+          { name: "Autores", url: `/en/autores/` },
+          { name: author.data.name, url: `/en/autor/${author.id}/` },
         ],
       }}
     />
@@ -158,7 +156,7 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
                 : post.data.heroImage;
               return (
                 <article>
-                  <a href={`/${lang}/blog/${post.id}/`} class="block group">
+                  <a href={`/en/blog/${post.id}/`} class="block group">
                     {imgSrc && (
                       <SkeletonImageNatural
                         src={imgSrc}

@@ -12,11 +12,19 @@ const { lang } = Astro.props;
 const otherLocale = getOtherLocale(lang);
 const currentPath = Astro.url.pathname;
 
-// Default: just swap the lang prefix
-let otherPath = currentPath.replace(`/${lang}/`, `/${otherLocale}/`);
+// Start with a direct prefix swap
+let otherPath = currentPath;
+
+if (lang === "es") {
+  // ES → EN: prepend /en
+  otherPath = `/en${currentPath}`;
+} else {
+  // EN → ES: remove /en prefix
+  otherPath = currentPath.replace(/^\/en/, "") || "/";
+}
 
 // For blog posts, try to find the translated version
-const blogMatch = currentPath.match(new RegExp(`^/${lang}/blog/(.+)/$`));
+const blogMatch = currentPath.match(/^\/(?:en\/)?blog\/([^/]+)\/?$/);
 if (blogMatch) {
   const currentSlug = blogMatch[1];
   const posts = await getCollection("blog");
@@ -26,20 +34,24 @@ if (blogMatch) {
 
   if (currentPost?.data.translationOf) {
     // Current post has a translationOf field → use that slug
-    otherPath = `/${otherLocale}/blog/${currentPost.data.translationOf}/`;
+    otherPath = otherLocale === "es"
+      ? `/blog/${currentPost.data.translationOf}/`
+      : `/en/blog/${currentPost.data.translationOf}/`;
   } else {
     // Look for a post in the other language that points to this one
     const otherPost = posts.find(
       (p) => p.data.lang === otherLocale && p.data.translationOf === currentSlug
     );
     if (otherPost) {
-      otherPath = `/${otherLocale}/blog/${otherPost.id}/`;
+      otherPath = otherLocale === "es"
+        ? `/blog/${otherPost.id}/`
+        : `/en/blog/${otherPost.id}/`;
     }
   }
 }
 
 // For tag pages, translate the tag slug
-const tagMatch = currentPath.match(new RegExp(`^/${lang}/tags/(.+)/$`));
+const tagMatch = currentPath.match(/^\/(?:en\/)?tags\/([^/]+)\/?$/);
 if (tagMatch) {
   const currentTagSlug = tagMatch[1];
   const map = tagTranslations[otherLocale];
@@ -51,13 +63,18 @@ if (tagMatch) {
     );
     otherTagSlug = entry?.[1];
   }
-  otherPath = `/${otherLocale}/tags/${slugify(otherTagSlug || currentTagSlug)}/`;
+  const targetSlug = slugify(otherTagSlug || currentTagSlug);
+  otherPath = otherLocale === "es"
+    ? `/tags/${targetSlug}/`
+    : `/en/tags/${targetSlug}/`;
 }
 
 // For author pages, keep the same slug (authors are shared)
-const authorMatch = currentPath.match(new RegExp(`^/${lang}/autor/(.+)/$`));
+const authorMatch = currentPath.match(/^\/(?:en\/)?autor\/([^/]+)\/?$/);
 if (authorMatch) {
-  otherPath = `/${otherLocale}/autor/${authorMatch[1]}/`;
+  otherPath = otherLocale === "es"
+    ? `/autor/${authorMatch[1]}/`
+    : `/en/autor/${authorMatch[1]}/`;
 }
 ---
 

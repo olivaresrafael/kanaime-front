@@ -14,11 +14,12 @@ const {
   tags,
   lang,
 } = Astro.props;
+const basePath = lang === "es" ? "" : "/en";
 const primaryTag = tags?.[0];
 ---
 
 <a
-  href={`/${lang}/blog/${postId}/`}
+  href={`${basePath}/blog/${postId}/`}
   class="grid grid-cols-8 p-5 justify-items-center"
 >
   <div class="col-span-8 pb-8">

@@ -19,6 +19,7 @@ interface Props {
 
 const { lang, mode = "simple", posts, limit = 8 } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 
 // Contar artículos por tag
 const tagCounts = new Map<string, number>();
@@ -45,7 +46,7 @@ const sortedTags = Array.from(tagCounts.entries())
     {
       sortedTags.map(([tag, count]) => (
         <a
-          href={`/${lang}/tags/${slugify(tag)}/`}
+          href={`${basePath}/tags/${slugify(tag)}/`}
           class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
         >
           <span>{tag}</span>

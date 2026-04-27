@@ -1,6 +1,6 @@
 ---
 import { useTranslations } from "../../i18n/utils";
-const lang = (Astro.params.lang as "es" | "en") || "es";
+const lang = "en";
 const t = useTranslations(lang);
 
 import { getCollection } from "astro:content";
@@ -31,12 +31,6 @@ posts.forEach((post) => {
 const allTags = Array.from(tagMap.entries());
 const description = `Explora todo el archivo de ${SITE_TITLE}: naturaleza, exploración, cultura, fotografía y perfiles desde Venezuela.`;
 
-export async function getStaticPaths() {
-  return [
-    { params: { lang: 'es' } },
-    { params: { lang: 'en' } },
-  ];
-}
 ---
 <!doctype html>
 <html lang={lang}>
@@ -46,8 +40,8 @@ export async function getStaticPaths() {
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: "/" },
-          { name: "Buscar", url: "/search/" },
+          { name: "Inicio", url: "/en/" },
+          { name: "Buscar", url: "/en/search/" },
         ],
       }}
     />
@@ -140,7 +134,7 @@ export async function getStaticPaths() {
                 data-author={(post.data.author || "").toLowerCase()}
                 data-tags={post.data.tags.map((t) => slugify(t)).join(",")}
               >
-                <a href={`//blog/${post.id}/`} class="block group">
+                <a href={`/en/blog/${post.id}/`} class="block group">
                   {imgSrc && (
                     <SkeletonImageNatural
                       src={imgSrc}

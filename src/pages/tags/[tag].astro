@@ -1,82 +1,61 @@
 ---
 import { getCollection } from "astro:content";
-import BaseHead from "../../../components/BaseHead.astro";
-import SchemaOrg from "../../../components/SchemaOrg.astro";
-import Header from "../../../components/Header.astro";
-import Footer from "../../../components/Footer.astro";
-import FormattedDate from "../../../components/FormattedDate.astro";
-import SkeletonImageNatural from "../../../components/SkeletonImageNatural.astro";
-import { useTranslations, getTagDisplay, getAllTags } from "../../../i18n/utils";
-import { slugify, matchAccentInsensitive } from "../../../utils/slugify";
-import { SITE_TITLE } from "../../../consts";
+import BaseHead from "../../components/BaseHead.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
+import { useTranslations, getTagDisplay, getAllTags } from "../../i18n/utils";
+import { slugify, matchAccentInsensitive } from "../../utils/slugify";
+import { SITE_TITLE } from "../../consts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
 
-  // Tags base por idioma (definidos dentro de getStaticPaths para evitar scope issues)
   const ALL_TAGS_ES = ["naturaleza", "exploración", "cultura", "fotografía", "perfiles"];
-  const ALL_TAGS_EN = ["nature", "exploration", "culture", "photography", "profiles"];
 
-  const paths: Array<{
-    params: { lang: string; tag: string };
-    props: {
-      tagSlug: string;
-      tagDisplay: string;
-      posts: typeof posts;
-      allTags: Array<[string, string]>;
-      locale: string;
-    };
-  }> = [];
+  const localePosts = posts.filter((p) => p.data.lang === "es");
 
-  // Helper para generar paths de un locale
-  function generateForLocale(locale: string, allTagsList: string[]) {
-    const localePosts = posts.filter((p) => p.data.lang === locale);
-
-    const tagMap = new Map<string, string>();
-    localePosts.forEach((post) => {
-      post.data.tags.forEach((tag) => {
-        const tagSlug = slugify(tag);
-        if (!tagMap.has(tagSlug)) {
-          tagMap.set(tagSlug, tag);
-        }
-      });
-    });
-
-    allTagsList.forEach((tag) => {
+  const tagMap = new Map<string, string>();
+  localePosts.forEach((post) => {
+    post.data.tags.forEach((tag) => {
       const tagSlug = slugify(tag);
       if (!tagMap.has(tagSlug)) {
         tagMap.set(tagSlug, tag);
       }
     });
+  });
 
-    Array.from(tagMap.entries()).forEach(([tagSlug, tagDisplay]) => {
-      const filteredPosts = localePosts.filter((post) =>
-        post.data.tags.some((t) => matchAccentInsensitive(t, tagSlug))
-      );
+  ALL_TAGS_ES.forEach((tag) => {
+    const tagSlug = slugify(tag);
+    if (!tagMap.has(tagSlug)) {
+      tagMap.set(tagSlug, tag);
+    }
+  });
 
-      paths.push({
-        params: { lang: locale, tag: tagSlug },
-        props: {
-          tagSlug,
-          tagDisplay,
-          posts: filteredPosts.sort(
-            (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-          ),
-          allTags: Array.from(tagMap.entries()),
-          locale,
-        },
-      });
-    });
-  }
+  return Array.from(tagMap.entries()).map(([tagSlug, tagDisplay]) => {
+    const filteredPosts = localePosts.filter((post) =>
+      post.data.tags.some((t) => matchAccentInsensitive(t, tagSlug))
+    );
 
-  generateForLocale("es", ALL_TAGS_ES);
-  generateForLocale("en", ALL_TAGS_EN);
-
-  return paths;
+    return {
+      params: { tag: tagSlug },
+      props: {
+        tagSlug,
+        tagDisplay,
+        posts: filteredPosts.sort(
+          (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+        ),
+        allTags: Array.from(tagMap.entries()),
+      },
+    };
+  });
 }
 
-const { tagSlug, tagDisplay, posts, allTags, locale } = Astro.props;
-const t = useTranslations(locale as "es" | "en");
+const { tagSlug, tagDisplay, posts, allTags } = Astro.props;
+const locale = "es";
+const t = useTranslations(locale);
 
 const description =
   locale === "es"
@@ -92,8 +71,8 @@ const description =
       schema={{
         type: "breadcrumb",
         items: [
-          { name: t("nav.home"), url: `/${locale}/` },
-          { name: tagDisplay, url: `/${locale}/tags/${tagSlug}/` },
+          { name: t("nav.home"), url: `/` },
+          { name: tagDisplay, url: `/tags/${tagSlug}/` },
         ],
       }}
     />
@@ -134,7 +113,7 @@ const description =
           <div class="flex flex-wrap gap-3">
             {allTags.map(([slug, display]) => (
               <a
-                href={`/${locale}/tags/${slug}/`}
+                href={`/tags/${slug}/`}
                 class={`px-5 py-2 border text-xs uppercase tracking-wider transition-colors ${
                   slug === tagSlug
                     ? "border-[#A31621] text-[#A31621] bg-[#A31621]/5"
@@ -174,7 +153,7 @@ const description =
                         : "md:col-span-5"
                   }`}
                 >
-                  <a href={`/${locale}/blog/${post.id}/`} class="block group">
+                  <a href={`/blog/${post.id}/`} class="block group">
                     {imgSrc && (
                       <SkeletonImageNatural
                         src={imgSrc}

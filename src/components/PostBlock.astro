@@ -5,13 +5,14 @@ import { slugify } from "../utils/slugify";
 
 const { postId, img, imgAlt, description, title, pubDate, author, tags, lang } =
   Astro.props;
+const basePath = lang === "es" ? "" : "/en";
 
 const imgSrc = img && typeof img === 'object' ? img.src : img;
 const primaryTag = tags?.[0];
 ---
 
 <span>
-  <a href={`/${lang}/blog/${postId}/`}>
+  <a href={`${basePath}/blog/${postId}/`}>
     {imgSrc && <SkeletonImage src={imgSrc} alt={imgAlt || ""} aspect="4/3" class="w-full" />}
     <p class="font-light text-grey my-5">
       <span>{author}</span>
@@ -19,7 +20,7 @@ const primaryTag = tags?.[0];
         <>
           <span class="mx-2">·</span>
           <a
-            href={`/${lang}/tags/${slugify(primaryTag)}/`}
+            href={`${basePath}/tags/${slugify(primaryTag)}/`}
             class="text-grey hover:text-[#A31621] transition-colors"
             onclick="event.stopPropagation();"
           >

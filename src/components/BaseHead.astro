@@ -24,6 +24,10 @@ interface Props {
   };
   noindex?: boolean;
   lang?: "es" | "en";
+  alternates?: {
+    es?: string;
+    en?: string;
+  };
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -36,6 +40,7 @@ const {
   article,
   noindex = false,
   lang = "es",
+  alternates,
 } = Astro.props;
 
 const imageURL = new URL(image.src, Astro.site).toString();
@@ -68,6 +73,11 @@ const imageURL = new URL(image.src, Astro.site).toString();
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+
+<!-- Hreflang -->
+{alternates?.es && <link rel="alternate" hreflang="es" href={new URL(alternates.es, Astro.site).toString()} />}
+{alternates?.en && <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site).toString()} />}
+{alternates && <link rel="alternate" hreflang="x-default" href={new URL(alternates.es || "/", Astro.site).toString()} />}
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

@@ -1,24 +1,18 @@
 ---
-import { useTranslations } from "../../i18n/utils";
-const lang = (Astro.params.lang as "es" | "en") || "es";
+import { useTranslations } from "../i18n/utils";
+const lang = "es";
 const t = useTranslations(lang);
 
-import BaseHead from "../../components/BaseHead.astro";
-import SchemaOrg from "../../components/SchemaOrg.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import SponsorCard from "../../components/SponsorCard.astro";
-import Divider from "../../components/Divider.astro";
-import { SITE_TITLE } from "../../consts";
+import BaseHead from "../components/BaseHead.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SponsorCard from "../components/SponsorCard.astro";
+import Divider from "../components/Divider.astro";
+import { SITE_TITLE } from "../consts";
 
 const description = "Descubre a los aliados de Kanaimé: marcas y organizaciones comprometidas con la naturaleza, la exploración y la cultura venezolana.";
 
-export async function getStaticPaths() {
-  return [
-    { params: { lang: 'es' } },
-    { params: { lang: 'en' } },
-  ];
-}
 ---
 <!doctype html>
 <html lang={lang}>
@@ -28,8 +22,8 @@ export async function getStaticPaths() {
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: `/${lang}/` },
-          { name: "Aliados", url: `/${lang}/sponsors/` },
+          { name: "Inicio", url: `/` },
+          { name: "Aliados", url: `/sponsors/` },
         ],
       }}
     />

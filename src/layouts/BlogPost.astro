@@ -18,6 +18,10 @@ type Props = CollectionEntry<"blog">["data"] & {
   canonicalUrl?: string;
   readingTimeMinutes?: number;
   lang?: "es" | "en";
+  alternates?: {
+    es?: string;
+    en?: string;
+  };
 };
 
 const {
@@ -33,10 +37,12 @@ const {
   canonicalUrl: customCanonicalUrl,
   readingTimeMinutes,
   lang: propLang,
+  alternates,
 } = Astro.props;
 
 const lang = propLang || (Astro.url.pathname.startsWith("/en/") ? "en" : "es");
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 
 // coverImage = hero del post individual; heroImage = portada para listados/home
 const coverSrc = coverImage && typeof coverImage === "object" ? coverImage.src : coverImage;
@@ -44,15 +50,15 @@ const listHeroSrc = heroImage && typeof heroImage === "object" ? heroImage.src :
 const heroSrc = coverSrc || listHeroSrc;
 const canonicalUrl =
   customCanonicalUrl ||
-  (slug ? new URL(`/${lang}/blog/${slug}/`, Astro.site).toString() : new URL(Astro.url.pathname, Astro.site).toString());
-const breadcrumbUrl = customCanonicalUrl || (slug ? `/${lang}/blog/${slug}/` : Astro.url.pathname);
+  (slug ? new URL(`${basePath}/blog/${slug}/`, Astro.site).toString() : new URL(Astro.url.pathname, Astro.site).toString());
+const breadcrumbUrl = customCanonicalUrl || (slug ? `${basePath}/blog/${slug}/` : Astro.url.pathname);
 const primaryTag = tags?.[0];
 
 const allAuthors = await getCollection("authors");
 const authorEntry = author
   ? allAuthors.find((a) => a.data.name.toLowerCase() === author.toLowerCase())
   : undefined;
-const authorProfileUrl = authorEntry ? `/${lang}/autor/${authorEntry.id}/` : undefined;
+const authorProfileUrl = authorEntry ? `${basePath}/autor/${authorEntry.id}/` : undefined;
 
 // Posts del mismo idioma para el sidebar
 const allPosts = await getCollection("blog");
@@ -73,6 +79,7 @@ const langPosts = allPosts.filter((p) => p.data.lang === lang);
         tags: tags || [],
       }}
       lang={lang}
+      alternates={alternates}
     />
     <SchemaOrg
       schema={{
@@ -93,7 +100,7 @@ const langPosts = allPosts.filter((p) => p.data.lang === lang);
       schema={{
         type: "breadcrumb",
         items: [
-          { name: t("nav.home"), url: `/${lang}/` },
+          { name: t("nav.home"), url: `${basePath}/` },
           { name: title, url: breadcrumbUrl },
         ],
       }}
@@ -212,7 +219,7 @@ const langPosts = allPosts.filter((p) => p.data.lang === lang);
         <div class="max-w-5xl">
           {primaryTag && (
             <a
-              href={`/${lang}/tags/${slugify(primaryTag)}/`}
+              href={`${basePath}/tags/${slugify(primaryTag)}/`}
               class="inline-block text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/70 mb-4 hover:text-white transition-colors"
             >
               {primaryTag}
@@ -286,7 +293,7 @@ const langPosts = allPosts.filter((p) => p.data.lang === lang);
                 <div class="flex flex-wrap gap-3">
                   {tags.map((tag) => (
                     <a
-                      href={`/${lang}/tags/${slugify(tag)}/`}
+                      href={`${basePath}/tags/${slugify(tag)}/`}
                       class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
                     >
                       {tag}

@@ -25,6 +25,7 @@ interface Props {
 
 const { lang, mode = "simple", posts, currentPostId, currentTags = [], limit = 4 } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 
 // Encontrar posts que compartan al menos un tag
 const related = posts
@@ -59,7 +60,7 @@ if (related.length === 0) return;
             ? post.data.heroImage.src
             : post.data.heroImage;
         return (
-          <a href={`/${lang}/blog/${post.id}/`} class="group block">
+          <a href={`${basePath}/blog/${post.id}/`} class="group block">
             {mode === "detail" && imgSrc && (
               <div class="overflow-hidden mb-2 bg-gray-100">
                 <img

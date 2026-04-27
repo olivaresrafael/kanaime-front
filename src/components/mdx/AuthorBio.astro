@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { authorName, lang = "es" } = Astro.props;
+const basePath = lang === "es" ? "" : "/en";
 
 const allAuthors = await getCollection("authors");
 // Buscar autor por nombre en la colección
@@ -43,7 +44,7 @@ const authorId = author?.id;
       <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">Escrito por</p>
       <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Bebas Neue', sans-serif;">
         {authorId ? (
-          <a href={`/${lang}/autor/${authorId}/`} class="hover:text-[#A31621] transition-colors">
+          <a href={`${basePath}/autor/${authorId}/`} class="hover:text-[#A31621] transition-colors">
             {displayName}
           </a>
         ) : (
@@ -58,7 +59,7 @@ const authorId = author?.id;
       )}
       {authorId && (
         <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
-          <a href={`/${lang}/autor/${authorId}/`} class="text-gray-400 hover:text-[#A31621] transition-colors">
+          <a href={`${basePath}/autor/${authorId}/`} class="text-gray-400 hover:text-[#A31621] transition-colors">
             Ver perfil
           </a>
           {author?.data.social?.twitter && (

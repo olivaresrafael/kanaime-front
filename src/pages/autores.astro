@@ -1,23 +1,20 @@
 ---
-import { useTranslations } from "../../i18n/utils";
-const lang = (Astro.params.lang as "es" | "en") || "es";
+import { useTranslations } from "../i18n/utils";
+const lang = "es";
 const t = useTranslations(lang);
 
 import { getCollection } from "astro:content";
-import BaseHead from "../../components/BaseHead.astro";
-import SchemaOrg from "../../components/SchemaOrg.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
-import { SITE_TITLE } from "../../consts";
+import BaseHead from "../components/BaseHead.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SkeletonImageNatural from "../components/SkeletonImageNatural.astro";
+import { SITE_TITLE } from "../consts";
 
 const authors = await getCollection("authors");
 
 const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
 
-export async function getStaticPaths() {
-  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
-}
 ---
 
 <!doctype html>
@@ -33,15 +30,15 @@ export async function getStaticPaths() {
         type: "website",
         name: `${t("nav.authors")} — ${SITE_TITLE}`,
         description: t("authors.description"),
-        url: `${siteUrl}/${lang}/autores/`,
+        url: `${siteUrl}/autores/`,
       }}
     />
     <SchemaOrg
       schema={{
         type: "breadcrumb",
         items: [
-          { name: t("nav.home"), url: `/${lang}/` },
-          { name: t("nav.authors"), url: `/${lang}/autores/` },
+          { name: t("nav.home"), url: `/` },
+          { name: t("nav.authors"), url: `/autores/` },
         ],
       }}
     />
@@ -88,7 +85,7 @@ export async function getStaticPaths() {
                   : author.data.photo;
               return (
                 <article class="group">
-                  <a href={`/${lang}/autor/${author.id}/`} class="block">
+                  <a href={`/autor/${author.id}/`} class="block">
                     <div class="overflow-hidden mb-6 bg-gray-100">
                       {photoSrc ? (
                         <SkeletonImageNatural
@@ -115,7 +112,7 @@ export async function getStaticPaths() {
                       style="font-family: 'Bebas Neue', sans-serif;"
                     >
                       <a
-                        href={`/${lang}/autor/${author.id}/`}
+                        href={`/autor/${author.id}/`}
                         class="hover:text-[#A31621] transition-colors"
                       >
                         {author.data.name}

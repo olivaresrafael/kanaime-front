@@ -25,6 +25,7 @@ interface Props {
 
 const { lang, mode = "simple", posts, currentPostId, limit = 5 } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 
 const recentPosts = posts
   .filter((p) => p.id !== currentPostId)
@@ -50,7 +51,7 @@ const recentPosts = posts
         const primaryTag = post.data.tags?.[0];
         return (
           <a
-            href={`/${lang}/blog/${post.id}/`}
+            href={`${basePath}/blog/${post.id}/`}
             class="group block"
           >
             {mode === "detail" && imgSrc && (

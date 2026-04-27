@@ -13,7 +13,7 @@ import NewsletterSignup from "../../components/NewsletterSignup.astro";
 import { useTranslations } from "../../i18n/utils";
 import { SITE_TITLE, SITE_DESCRIPTION, COVER_BG_COLOR } from "../../consts";
 
-const lang = (Astro.params.lang as "es" | "en") || "es";
+const lang = "en";
 const t = useTranslations(lang);
 
 const posts = (await getCollection("blog"))
@@ -31,9 +31,6 @@ const featuredImageSrc =
 
 const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
 
-export async function getStaticPaths() {
-  return [{ params: { lang: "es" } }, { params: { lang: "en" } }];
-}
 ---
 
 <!doctype html>
@@ -44,19 +41,20 @@ export async function getStaticPaths() {
       description={SITE_DESCRIPTION}
       image={featuredPost?.data.heroImage}
       lang={lang}
+      alternates={{ es: "/", en: "/en/" }}
     />
     <SchemaOrg
       schema={{
         type: "website",
         name: SITE_TITLE,
         description: SITE_DESCRIPTION,
-        url: `${siteUrl}/${lang}/`,
+        url: `${siteUrl}/en/`,
       }}
     />
     <SchemaOrg
       schema={{
         type: "breadcrumb",
-        items: [{ name: t("nav.home"), url: `/${lang}/` }],
+        items: [{ name: t("nav.home"), url: `/en/` }],
       }}
     />
     <style>

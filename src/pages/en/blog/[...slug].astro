@@ -9,21 +9,37 @@ import FullWidthImage from "../../../components/mdx/FullWidthImage.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map((post) => ({
-    params: { lang: post.data.lang, slug: post.id },
-    props: post,
-  }));
+  return posts
+    .filter((post) => post.data.lang === "en")
+    .map((post) => ({
+      params: { slug: post.id },
+      props: post,
+    }));
 }
 type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
-const lang = (Astro.params.lang as "es" | "en") || "es";
+const lang = "en";
 
 const { Content } = await render(post);
 
 // Calcular tiempo de lectura (aproximado desde markdown raw)
 const wordCount = post.body ? post.body.split(/\s+/).filter((w) => w.length > 0).length : 0;
 const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
+// Buscar traducción para hreflang
+const allPosts = await getCollection("blog");
+let esSlug: string | undefined;
+if (post.data.translationOf) {
+  esSlug = post.data.translationOf;
+} else {
+  const esPost = allPosts.find((p) => p.data.lang === "es" && p.data.translationOf === post.id);
+  if (esPost) esSlug = esPost.id;
+}
+const alternates = {
+  en: `/en/blog/${post.id}/`,
+  ...(esSlug && { es: `/blog/${esSlug}/` }),
+};
 ---
 
 <BlogPost
@@ -32,6 +48,7 @@ const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
   tags={post.data.tags}
   readingTimeMinutes={readingTimeMinutes}
   lang={lang}
+  alternates={alternates}
 >
   <Content components={{ DropCap, PullQuote, TwoColumn, FullWidthImage }} />
 </BlogPost>

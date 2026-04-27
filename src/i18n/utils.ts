@@ -13,9 +13,13 @@ export function getOtherLocale(current: string): "es" | "en" {
 
 /**
  * Build a localized path.
- * /about → /es/about or /en/about
+ * Spanish (default) has no prefix: /about
+ * English uses /en prefix: /en/about
  */
 export function localizePath(path: string, locale: string): string {
   const clean = path.replace(/^\//, "");
+  if (locale === "es") {
+    return clean ? `/${clean}` : "/";
+  }
   return `/${locale}/${clean}`;
 }

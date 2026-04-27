@@ -8,6 +8,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const basePath = lang === "es" ? "" : "/en";
 ---
 
 <footer class="border-t border-gray-200 mt-20">
@@ -17,16 +18,16 @@ const t = useTranslations(lang);
       <div>
         <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-6 bebas-neue-regular">{t("footer.navigation")}</h3>
         <ul class="space-y-3">
-          <li><a href={`/${lang}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.home")}</a></li>
-          <li><a href={`/${lang}/autores/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.authors")}</a></li>
-          <li><a href={`/${lang}/sponsors/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.sponsors")}</a></li>
+          <li><a href={`${basePath}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.home")}</a></li>
+          <li><a href={`${basePath}/autores/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.authors")}</a></li>
+          <li><a href={`${basePath}/sponsors/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.sponsors")}</a></li>
           <li><a href="/rss.xml" class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">RSS</a></li>
         </ul>
       </div>
 
       <!-- Columna 2: Logo centrado -->
       <div class="flex flex-col items-center justify-center">
-        <a href={`/${lang}/`} class="text-6xl md:text-7xl font-bold bebas-neue-regular mb-4">{SITE_TITLE}</a>
+        <a href={`${basePath}/`} class="text-6xl md:text-7xl font-bold bebas-neue-regular mb-4">{SITE_TITLE}</a>
         <p class="text-center text-gray-500 text-sm max-w-xs source-serif-4-font">
           {t("footer.tagline")}
         </p>
@@ -36,10 +37,10 @@ const t = useTranslations(lang);
       <div class="md:text-right">
         <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-6 bebas-neue-regular">{t("footer.categories")}</h3>
         <ul class="space-y-3">
-          <li><a href={`/${lang}/tags/${lang === "es" ? "naturaleza" : "nature"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.nature")}</a></li>
-          <li><a href={`/${lang}/tags/${lang === "es" ? "exploracion" : "exploration"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.exploration")}</a></li>
-          <li><a href={`/${lang}/tags/${lang === "es" ? "cultura" : "culture"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.culture")}</a></li>
-          <li><a href={`/${lang}/tags/${lang === "es" ? "perfiles" : "profiles"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.profiles")}</a></li>
+          <li><a href={`${basePath}/tags/${lang === "es" ? "naturaleza" : "nature"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.nature")}</a></li>
+          <li><a href={`${basePath}/tags/${lang === "es" ? "exploracion" : "exploration"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.exploration")}</a></li>
+          <li><a href={`${basePath}/tags/${lang === "es" ? "cultura" : "culture"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.culture")}</a></li>
+          <li><a href={`${basePath}/tags/${lang === "es" ? "perfiles" : "profiles"}/`} class="text-lg hover:text-gray-600 transition-colors source-serif-4-font">{t("nav.profiles")}</a></li>
         </ul>
       </div>
     </div>
