@@ -1,34 +1,30 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BaseHead from "../../components/BaseHead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import SchemaOrg from "../../components/SchemaOrg.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
 import Divider from "../../components/Divider.astro";
 import SkeletonImageNatural from "../../components/SkeletonImageNatural.astro";
 import { SITE_TITLE } from "../../consts";
+import { getImageSrc } from "../../utils/images";
 
 export async function getStaticPaths() {
   const authors = await getCollection("authors");
   const posts = await getCollection("blog");
 
-  const paths: Array<{
-    params: { slug: string };
-    props: { author: CollectionEntry<"authors">; posts: CollectionEntry<"blog">[] };
-  }> = [];
-
-  authors.forEach((author) => {
+  return authors.map((author) => {
     const authorPosts = posts
-      .filter((p) => p.data.author?.toLowerCase() === author.data.name.toLowerCase() && p.data.lang === "es")
+      .filter(
+        (p) =>
+          p.data.author?.toLowerCase() === author.data.name.toLowerCase() &&
+          p.data.lang === "es"
+      )
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-    paths.push({
+    return {
       params: { slug: author.id },
       props: { author, posts: authorPosts },
-    });
+    };
   });
-
-  return paths;
 }
 
 type Props = {
@@ -38,28 +34,22 @@ type Props = {
 
 const { author, posts } = Astro.props;
 const lang = "es";
-const photoSrc = author.data.photo && typeof author.data.photo === "object"
-  ? author.data.photo.src
-  : author.data.photo;
-
-const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
+const photoSrc = getImageSrc(author.data.photo);
 ---
 
-<!doctype html>
-<html lang={lang}>
-  <head>
-    <BaseHead
-      title={`${author.data.name} — ${SITE_TITLE}`}
-      description={author.data.bio}
-      image={author.data.photo}
-      lang={lang}
-    />
+<BaseLayout
+  title={`${author.data.name} — ${SITE_TITLE}`}
+  description={author.data.bio}
+  image={author.data.photo}
+  lang={lang}
+>
+  <Fragment slot="head">
     <SchemaOrg
       schema={{
         type: "website",
         name: `${author.data.name} — ${SITE_TITLE}`,
         description: author.data.bio,
-        url: `${siteUrl}/autor/${author.id}/`,
+        url: `${Astro.site}/autor/${author.id}/`,
       }}
     />
     <SchemaOrg
@@ -72,123 +62,89 @@ const siteUrl = Astro.site ? Astro.site.toString() : "https://kanaime.com";
         ],
       }}
     />
-  </head>
-  <body>
-    <Header lang={lang} />
-    <main class="w-full bg-white">
-      <!-- Author Header -->
-      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12">
-        <div class="flex flex-col md:flex-row items-start gap-10 md:gap-16">
-          {photoSrc && (
-            <div class="shrink-0 w-40 h-40 md:w-56 md:h-56 overflow-hidden bg-gray-100">
-              <SkeletonImageNatural
-                src={photoSrc}
-                alt={author.data.name}
-                class="w-full h-full"
-                minHeight="0"
-                imgClass="w-full h-full object-cover grayscale"
-              />
-            </div>
-          )}
-          <div class="flex-1">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-3">{author.data.role}</p>
-            <h1
-              class="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6"
-              style="font-family: 'Bebas Neue', sans-serif;"
-            >
-              {author.data.name}
-            </h1>
-            <p
-              class="text-lg md:text-xl font-light text-gray-600 leading-relaxed max-w-2xl"
-              style="font-family: 'Source Serif 4', serif;"
-            >
-              {author.data.bio}
-            </p>
-            <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
-              {author.data.social?.website && (
-                <a
-                  href={author.data.social.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-gray-400 hover:text-[#A31621] transition-colors"
-                >
-                  Web
-                </a>
-              )}
-              {author.data.social?.twitter && (
-                <a
-                  href={author.data.social.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-gray-400 hover:text-[#A31621] transition-colors"
-                >
-                  Twitter
-                </a>
-              )}
-              {author.data.social?.instagram && (
-                <a
-                  href={author.data.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-gray-400 hover:text-[#A31621] transition-colors"
-                >
-                  Instagram
-                </a>
-              )}
-            </div>
+  </Fragment>
+
+  <main class="w-full bg-white">
+    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12">
+      <div class="flex flex-col md:flex-row items-start gap-10 md:gap-16">
+        {photoSrc && (
+          <div class="shrink-0 w-40 h-40 md:w-56 md:h-56 overflow-hidden bg-gray-100">
+            <SkeletonImageNatural
+              src={photoSrc}
+              alt={author.data.name}
+              class="w-full h-full"
+              minHeight="0"
+              imgClass="w-full h-full object-cover grayscale"
+            />
+          </div>
+        )}
+        <div class="flex-1">
+          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-3">{author.data.role}</p>
+          <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 font-bebas">
+            {author.data.name}
+          </h1>
+          <p class="text-lg md:text-xl font-light text-gray-600 leading-relaxed max-w-2xl font-serif">
+            {author.data.bio}
+          </p>
+          <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
+            {author.data.social?.website && (
+              <a href={author.data.social.website} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
+                Web
+              </a>
+            )}
+            {author.data.social?.twitter && (
+              <a href={author.data.social.twitter} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
+                Twitter
+              </a>
+            )}
+            {author.data.social?.instagram && (
+              <a href={author.data.social.instagram} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
+                Instagram
+              </a>
+            )}
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <Divider className="mx-6 md:mx-12 lg:mx-20 max-w-7xl" />
+    <Divider className="mx-6 md:mx-12 lg:mx-20 max-w-7xl" />
 
-      <!-- Author Posts -->
-      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12 md:py-20">
-        <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
-          {posts.length} {posts.length === 1 ? "artículo" : "artículos"} publicados
+    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12 md:py-20">
+      <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
+        {posts.length} {posts.length === 1 ? "artículo" : "artículos"} publicados
+      </p>
+
+      {posts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {posts.map((post) => {
+            const imgSrc = getImageSrc(post.data.heroImage);
+            return (
+              <article>
+                <a href={`/blog/${post.id}/`} class="block group">
+                  {imgSrc && (
+                    <SkeletonImageNatural
+                      src={imgSrc}
+                      alt={post.data.title}
+                      class="mb-4 bg-gray-100"
+                      imgClass="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+                    />
+                  )}
+                  <h3 class="text-xl md:text-2xl font-bold leading-tight group-hover:text-[#A31621] transition-colors font-bebas">
+                    {post.data.title}
+                  </h3>
+                  <p class="text-sm font-light text-gray-500 mt-2 line-clamp-2 font-serif">
+                    {post.data.description}
+                  </p>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="text-lg text-gray-400 font-light font-serif">
+          Este autor aún no tiene artículos publicados.
         </p>
-
-        {posts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-            {posts.map((post) => {
-              const imgSrc = post.data.heroImage && typeof post.data.heroImage === "object"
-                ? post.data.heroImage.src
-                : post.data.heroImage;
-              return (
-                <article>
-                  <a href={`/blog/${post.id}/`} class="block group">
-                    {imgSrc && (
-                      <SkeletonImageNatural
-                        src={imgSrc}
-                        alt={post.data.title}
-                        class="mb-4 bg-gray-100"
-                        imgClass="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                      />
-                    )}
-                    <h3
-                      class="text-xl md:text-2xl font-bold leading-tight group-hover:text-[#A31621] transition-colors"
-                      style="font-family: 'Bebas Neue', sans-serif;"
-                    >
-                      {post.data.title}
-                    </h3>
-                    <p
-                      class="text-sm font-light text-gray-500 mt-2 line-clamp-2"
-                      style="font-family: 'Source Serif 4', serif;"
-                    >
-                      {post.data.description}
-                    </p>
-                  </a>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <p class="text-lg text-gray-400 font-light" style="font-family: 'Source Serif 4', serif;">
-            Este autor aún no tiene artículos publicados.
-          </p>
-        )}
-      </section>
-    </main>
-    <Footer lang={lang} />
-  </body>
-</html>
+      )}
+    </section>
+  </main>
+</BaseLayout>

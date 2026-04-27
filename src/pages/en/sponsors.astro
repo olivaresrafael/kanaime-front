@@ -1,75 +1,72 @@
 ---
-import { useTranslations } from "../../i18n/utils";
-const lang = "en";
-const t = useTranslations(lang);
-
-import BaseHead from "../../components/BaseHead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import SchemaOrg from "../../components/SchemaOrg.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
 import SponsorCard from "../../components/SponsorCard.astro";
 import Divider from "../../components/Divider.astro";
 import { SITE_TITLE } from "../../consts";
+import { useTranslations } from "../../i18n/utils";
 
-const description = "Descubre a los aliados de Kanaimé: marcas y organizaciones comprometidas con la naturaleza, la exploración y la cultura venezolana.";
+const lang = "en";
+const t = useTranslations(lang);
 
+const description = "Discover Kanaimé's allies: brands and organizations committed to nature, exploration, and Venezuelan culture.";
 ---
-<!doctype html>
-<html lang={lang}>
-  <head>
-    <BaseHead title={`Aliados — ${SITE_TITLE}`} description={description} lang={lang} />
+
+<BaseLayout
+  title={`Allies — ${SITE_TITLE}`}
+  description={description}
+  lang={lang}
+>
+  <Fragment slot="head">
     <SchemaOrg
       schema={{
         type: "breadcrumb",
         items: [
-          { name: "Inicio", url: `/en/` },
-          { name: "Aliados", url: `/en/sponsors/` },
+          { name: t("nav.home"), url: `/en/` },
+          { name: "Allies", url: `/en/sponsors/` },
         ],
       }}
     />
-  </head>
-  <body>
-    <Header lang={lang} />
-    <main class="container mx-auto px-4 md:px-8 py-12 md:py-20">
-      <h1 class="text-6xl md:text-9xl font-bold mb-6 bebas-neue-regular text-center">
-        ALIADOS
-      </h1>
-      <p class="text-xl md:text-2xl text-gray-600 text-center max-w-2xl mx-auto mb-16 source-serif-4-font">
-        Marcas y organizaciones que comparten nuestra pasión por la naturaleza, la exploración y el conocimiento.
+  </Fragment>
+
+  <main class="container mx-auto px-4 md:px-8 py-12 md:py-20">
+    <h1 class="text-6xl md:text-9xl font-bold mb-6 bebas-neue-regular text-center">
+      ALLIES
+    </h1>
+    <p class="text-xl md:text-2xl text-gray-600 text-center max-w-2xl mx-auto mb-16 source-serif-4-font">
+      Brands and organizations that share our passion for nature, exploration, and knowledge.
+    </p>
+    <Divider className="mb-16" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <SponsorCard
+        name="eko.red"
+        description="Digital platform dedicated to sustainability, the environment, and communities. Connecting people with the planet."
+        url="https://eko.red"
+        category="Environment"
+      />
+      <SponsorCard
+        name="Your Brand"
+        description="Space reserved for future allies who share our vision of conservation and exploration."
+        category="Coming Soon"
+      />
+      <SponsorCard
+        name="Your Organization"
+        description="Do you have a brand or project aligned with Kanaimé? Contact us to explore partnerships."
+        category="Coming Soon"
+      />
+    </div>
+
+    <div class="mt-20 text-center">
+      <p class="text-lg text-gray-500 source-serif-4-font mb-4">
+        Interested in being part of Kanaimé?
       </p>
-      <Divider className="mb-16" />
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <SponsorCard
-          name="eko.red"
-          description="Plataforma digital dedicada a la sostenibilidad, el medio ambiente y las comunidades. Conectando personas con el planeta."
-          url="https://eko.red"
-          category="Medio Ambiente"
-        />
-        <SponsorCard
-          name="Tu Marca"
-          description="Espacio reservado para futuros aliados que compartan nuestra visión de conservación y exploración."
-          category="Próximamente"
-        />
-        <SponsorCard
-          name="Tu Organización"
-          description="¿Tienes una marca o proyecto alineado con Kanaimé? Contáctanos para explorar alianzas."
-          category="Próximamente"
-        />
-      </div>
-
-      <div class="mt-20 text-center">
-        <p class="text-lg text-gray-500 source-serif-4-font mb-4">
-          ¿Interesado en ser parte de Kanaimé?
-        </p>
-        <a
-          href="mailto:contacto@kanaime.com"
-          class="inline-block text-xl uppercase tracking-widest border-2 border-black px-8 py-4 hover:bg-black hover:text-white transition-colors duration-300"
-        >
-          Escríbenos
-        </a>
-      </div>
-    </main>
-    <Footer lang={lang} />
-  </body>
-</html>
+      <a
+        href="mailto:contacto@kanaime.com"
+        class="inline-block text-xl uppercase tracking-widest border-2 border-black px-8 py-4 hover:bg-black hover:text-white transition-colors duration-300"
+      >
+        Write to us
+      </a>
+    </div>
+  </main>
+</BaseLayout>

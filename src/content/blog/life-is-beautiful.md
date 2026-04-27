@@ -1,7 +1,7 @@
 ---
 title: "Life is Beautiful"
 description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra."
-pubDate: "Jul 15 2024"
+pubDate: "2024-07-15T12:00:00"
 heroImage: "../../assets/blog-placeholder-4.jpg"
 author: "Rafael Olivares"
 tags: ["culture"]

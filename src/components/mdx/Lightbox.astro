@@ -1,6 +1,7 @@
 ---
 // Lightbox / galería para imágenes del artículo
 // Se incluye una vez en el layout BlogPost.astro
+const label = "Vista ampliada";
 ---
 
 <div
@@ -8,9 +9,8 @@
   class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-sm cursor-zoom-out"
   role="dialog"
   aria-modal="true"
-  aria-label="Vista ampliada"
+  aria-label={label}
 >
-  <!-- Botón cerrar -->
   <button
     id="lightbox-close"
     class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-10"
@@ -22,7 +22,6 @@
     </svg>
   </button>
 
-  <!-- Contenedor imagen + info -->
   <div class="max-w-[90vw] max-h-[90vh] flex flex-col items-center">
     <img
       id="lightbox-img"
@@ -31,74 +30,10 @@
       class="max-w-full max-h-[78vh] object-contain select-none"
     />
     <div class="mt-6 text-center max-w-2xl px-4">
-      <p
-        id="lightbox-caption"
-        class="text-sm uppercase tracking-[0.2em] text-white/70"
-      ></p>
-      <p
-        id="lightbox-credit"
-        class="text-xs uppercase tracking-wider text-white/40 mt-2"
-      ></p>
+      <p id="lightbox-caption" class="text-sm uppercase tracking-[0.2em] text-white/70"></p>
+      <p id="lightbox-credit" class="text-xs uppercase tracking-wider text-white/40 mt-2"></p>
     </div>
   </div>
 </div>
 
-<script is:inline>
-(function() {
-  const lightbox = document.getElementById('article-lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
-  const lightboxCaption = document.getElementById('lightbox-caption');
-  const lightboxCredit = document.getElementById('lightbox-credit');
-  const closeBtn = document.getElementById('lightbox-close');
-
-  if (!lightbox || !lightboxImg) return;
-
-  function open(src, caption, credit) {
-    lightboxImg.src = src;
-    lightboxImg.alt = caption || '';
-    lightboxCaption.textContent = caption || '';
-    lightboxCredit.textContent = credit || '';
-    lightbox.classList.remove('hidden');
-    lightbox.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function close() {
-    lightbox.classList.add('hidden');
-    lightbox.classList.remove('flex');
-    document.body.style.overflow = '';
-    lightboxImg.src = '';
-  }
-
-  // Clic en imágenes dentro del article body
-  document.querySelectorAll('.article-body img, .article-body figure img').forEach(function(img) {
-    img.style.cursor = 'zoom-in';
-    img.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const figure = img.closest('figure');
-      const caption = figure ? (figure.querySelector('figcaption')?.textContent?.trim() || img.alt || '') : (img.alt || '');
-      // Extraer crédito si está en el caption (formato: "texto — Autor")
-      let credit = '';
-      let cleanCaption = caption;
-      const dashMatch = caption.match(/^(.*?)\s*[—–-]\s*(Generated with|Generado con|Foto|Photo|Imagen)(.*)$/i);
-      if (dashMatch) {
-        cleanCaption = dashMatch[1].trim();
-        credit = (dashMatch[2] + dashMatch[3]).trim();
-      }
-      open(img.src, cleanCaption, credit);
-    });
-  });
-
-  // Cerrar con botón, click en fondo, o ESC
-  closeBtn?.addEventListener('click', close);
-  lightbox.addEventListener('click', function(e) {
-    if (e.target === lightbox) close();
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
-      close();
-    }
-  });
-})();
-</script>
+<script src="/scripts/lightbox.js" is:inline></script>

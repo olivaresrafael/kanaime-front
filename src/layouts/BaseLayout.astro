@@ -1,0 +1,62 @@
+---
+// BaseLayout — envuelve <html>, <head>, GTM, Header y Footer
+import BaseHead from "../components/BaseHead.astro";
+import GoogleTagManager from "../components/GoogleTagManager.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: "es" | "en";
+  image?: ImageMetadata;
+  ogType?: "website" | "article";
+  article?: {
+    publishedTime?: Date;
+    modifiedTime?: Date;
+    author?: string;
+    tags?: string[];
+  };
+  noindex?: boolean;
+  alternates?: {
+    es?: string;
+    en?: string;
+  };
+}
+
+const {
+  title,
+  description,
+  lang,
+  image,
+  ogType = "website",
+  article,
+  noindex = false,
+  alternates,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <GoogleTagManager mode="head" />
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      ogType={ogType}
+      article={article}
+      noindex={noindex}
+      lang={lang}
+      alternates={alternates}
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <GoogleTagManager mode="body" />
+    <Header lang={lang} />
+    <slot />
+    <Footer lang={lang} />
+  </body>
+</html>

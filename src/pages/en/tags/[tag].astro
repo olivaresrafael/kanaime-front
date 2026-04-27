@@ -1,52 +1,41 @@
 ---
 import { getCollection } from "astro:content";
-import BaseHead from "../../../components/BaseHead.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
 import SchemaOrg from "../../../components/SchemaOrg.astro";
-import Header from "../../../components/Header.astro";
-import Footer from "../../../components/Footer.astro";
 import FormattedDate from "../../../components/FormattedDate.astro";
 import SkeletonImageNatural from "../../../components/SkeletonImageNatural.astro";
 import { useTranslations, getTagDisplay, getAllTags } from "../../../i18n/utils";
 import { slugify, matchAccentInsensitive } from "../../../utils/slugify";
+import { getImageSrc } from "../../../utils/images";
 import { SITE_TITLE } from "../../../consts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-
   const ALL_TAGS_EN = ["nature", "exploration", "culture", "photography", "profiles"];
-
   const localePosts = posts.filter((p) => p.data.lang === "en");
 
   const tagMap = new Map<string, string>();
   localePosts.forEach((post) => {
     post.data.tags.forEach((tag) => {
       const tagSlug = slugify(tag);
-      if (!tagMap.has(tagSlug)) {
-        tagMap.set(tagSlug, tag);
-      }
+      if (!tagMap.has(tagSlug)) tagMap.set(tagSlug, tag);
     });
   });
-
   ALL_TAGS_EN.forEach((tag) => {
     const tagSlug = slugify(tag);
-    if (!tagMap.has(tagSlug)) {
-      tagMap.set(tagSlug, tag);
-    }
+    if (!tagMap.has(tagSlug)) tagMap.set(tagSlug, tag);
   });
 
   return Array.from(tagMap.entries()).map(([tagSlug, tagDisplay]) => {
     const filteredPosts = localePosts.filter((post) =>
       post.data.tags.some((t) => matchAccentInsensitive(t, tagSlug))
     );
-
     return {
       params: { tag: tagSlug },
       props: {
         tagSlug,
         tagDisplay,
-        posts: filteredPosts.sort(
-          (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-        ),
+        posts: filteredPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
         allTags: Array.from(tagMap.entries()),
       },
     };
@@ -60,10 +49,12 @@ const t = useTranslations(locale);
 const description = `Articles about ${tagDisplay} on Kanaimé: nature, exploration, and culture from Venezuela.`;
 ---
 
-<!doctype html>
-<html lang={locale}>
-  <head>
-    <BaseHead title={`${tagDisplay} — ${SITE_TITLE}`} description={description} lang={locale} />
+<BaseLayout
+  title={`${tagDisplay} — ${SITE_TITLE}`}
+  description={description}
+  lang={locale}
+>
+  <Fragment slot="head">
     <SchemaOrg
       schema={{
         type: "breadcrumb",
@@ -73,178 +64,117 @@ const description = `Articles about ${tagDisplay} on Kanaimé: nature, explorati
         ],
       }}
     />
-  </head>
-  <body>
-    <Header lang={locale} />
+    <script src="/scripts/tag-search.js" is:inline></script>
+  </Fragment>
 
-    <main class="w-full bg-white">
-      <!-- Search Header -->
-      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-8">
-        <p class="text-[10px] md:text-xs uppercase tracking-[0.3em] text-gray-400 mb-4">
-          {t("tags.explore")}
-        </p>
+  <main class="w-full bg-white">
+    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-8">
+      <p class="text-[10px] md:text-xs uppercase tracking-[0.3em] text-gray-400 mb-4">
+        {t("tags.explore")}
+      </p>
 
-        <!-- Search Input -->
-        <div class="relative mb-12">
-          <input
-            type="text"
-            id="tag-search-input"
-            placeholder={t("search.placeholder")}
-            class="w-full border-b border-gray-300 py-4 pr-12 text-lg md:text-xl font-light bg-transparent focus:outline-none focus:border-[#A31621] transition-colors"
-            style="font-family: 'Source Serif 4', serif;"
-          />
-          <button
-            id="tag-search-btn"
-            class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#A31621] transition-colors"
-            aria-label={t("nav.search")}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7 17L17 7M17 7H7M17 7V17"/>
-            </svg>
-          </button>
+      <div class="relative mb-12">
+        <input
+          type="text"
+          id="tag-search-input"
+          placeholder={t("search.placeholder")}
+          class="w-full border-b border-gray-300 py-4 pr-12 text-lg md:text-xl font-light bg-transparent focus:outline-none focus:border-[#A31621] transition-colors font-serif"
+        />
+        <button
+          id="tag-search-btn"
+          class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#A31621] transition-colors"
+          aria-label={t("nav.search")}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mb-16">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6">{t("tags.popular")}</p>
+        <div class="flex flex-wrap gap-3">
+          {allTags.map(([slug, display]) => (
+            <a
+              href={`/en/tags/${slug}/`}
+              class={`px-5 py-2 border text-xs uppercase tracking-wider transition-colors ${
+                slug === tagSlug
+                  ? "border-[#A31621] text-[#A31621] bg-[#A31621]/5"
+                  : "border-gray-200 text-gray-600 hover:border-[#A31621] hover:text-[#A31621]"
+              }`}
+            >
+              {display}
+            </a>
+          ))}
         </div>
+      </div>
+    </section>
 
-        <!-- Popular Tags -->
-        <div class="mb-16">
-          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6">{t("tags.popular")}</p>
-          <div class="flex flex-wrap gap-3">
-            {allTags.map(([slug, display]) => (
-              <a
-                href={`/en/tags/${slug}/`}
-                class={`px-5 py-2 border text-xs uppercase tracking-wider transition-colors ${
-                  slug === tagSlug
-                    ? "border-[#A31621] text-[#A31621] bg-[#A31621]/5"
-                    : "border-gray-200 text-gray-600 hover:border-[#A31621] hover:text-[#A31621]"
+    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pb-20 md:pb-32">
+      <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
+        {posts.length} {posts.length === 1 ? t("search.result") : t("search.results")} in <span class="text-gray-800">{tagDisplay}</span>
+      </p>
+
+      {posts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-y-16 md:gap-x-8">
+          {posts.map((post, index) => {
+            const imgSrc = getImageSrc(post.data.heroImage);
+            const isLarge = index === 0;
+            const isOdd = index % 2 !== 0;
+
+            return (
+              <article
+                class={`${
+                  isLarge
+                    ? "md:col-span-7"
+                    : isOdd
+                      ? "md:col-span-5 md:col-start-8"
+                      : "md:col-span-5"
                 }`}
               >
-                {display}
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+                <a href={`/en/blog/${post.id}/`} class="block group">
+                  {imgSrc && (
+                    <SkeletonImageNatural
+                      src={imgSrc}
+                      alt={post.data.title}
+                      class="mb-5 bg-gray-100"
+                      imgClass="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                    />
+                  )}
 
-      <!-- Results -->
-      <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pb-20 md:pb-32">
-        <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
-          {posts.length} {posts.length === 1 ? t("search.result") : t("search.results")} in <span class="text-gray-800">{tagDisplay}</span>
-        </p>
-
-        {posts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-y-16 md:gap-x-8">
-            {posts.map((post, index) => {
-              const imgSrc = post.data.heroImage && typeof post.data.heroImage === "object"
-                ? post.data.heroImage.src
-                : post.data.heroImage;
-
-              const isLarge = index === 0;
-              const isOdd = index % 2 !== 0;
-
-              return (
-                <article
-                  class={`${
-                    isLarge
-                      ? "md:col-span-7"
-                      : isOdd
-                        ? "md:col-span-5 md:col-start-8"
-                        : "md:col-span-5"
-                  }`}
-                >
-                  <a href={`/en/blog/${post.id}/`} class="block group">
-                    {imgSrc && (
-                      <SkeletonImageNatural
-                        src={imgSrc}
-                        alt={post.data.title}
-                        class="mb-5 bg-gray-100"
-                        imgClass="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                      />
+                  <div class="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-3">
+                    <span>{post.data.author}</span>
+                    <span>·</span>
+                    <FormattedDate date={post.data.pubDate} lang={locale} />
+                    {post.data.tags[0] && (
+                      <>
+                        <span>·</span>
+                        <span>{post.data.tags[0]}</span>
+                      </>
                     )}
+                  </div>
 
-                    <div class="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-3">
-                      <span>{post.data.author}</span>
-                      <span>·</span>
-                      <FormattedDate date={post.data.pubDate} />
-                      {post.data.tags[0] && (
-                        <>
-                          <span>·</span>
-                          <span>{post.data.tags[0]}</span>
-                        </>
-                      )}
-                    </div>
+                  <h2
+                    class={`font-bold leading-tight group-hover:text-[#A31621] transition-colors ${
+                      isLarge ? "text-3xl md:text-4xl" : "text-2xl md:text-3xl"
+                    } font-bebas`}
+                  >
+                    {post.data.title}
+                  </h2>
 
-                    <h2
-                      class={`font-bold leading-tight group-hover:text-[#A31621] transition-colors ${
-                        isLarge ? "text-3xl md:text-4xl" : "text-2xl md:text-3xl"
-                      }`}
-                      style="font-family: 'Bebas Neue', sans-serif;"
-                    >
-                      {post.data.title}
-                    </h2>
-
-                    <p
-                      class="text-sm md:text-base font-light text-gray-500 mt-3 leading-relaxed line-clamp-2"
-                      style="font-family: 'Source Serif 4', serif;"
-                    >
-                      {post.data.description}
-                    </p>
-                  </a>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <p class="text-lg text-gray-400 font-light" style="font-family: 'Source Serif 4', serif;">
-            {t("tags.noArticles")}
-          </p>
-        )}
-      </section>
-    </main>
-
-    <Footer lang={locale} />
-
-    <script is:inline>
-      (function() {
-        const input = document.getElementById('tag-search-input');
-        const btn = document.getElementById('tag-search-btn');
-
-        function normalize(str) {
-          return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-        }
-
-        function filterPosts() {
-          const query = normalize(input.value);
-          const articles = document.querySelectorAll('article');
-          let visibleCount = 0;
-
-          articles.forEach(function(article) {
-            const title = normalize(article.querySelector('h2')?.textContent || '');
-            const desc = normalize(article.querySelector('p')?.textContent || '');
-            const tag = normalize(article.querySelector('span:last-child')?.textContent || '');
-
-            if (title.includes(query) || desc.includes(query) || tag.includes(query)) {
-              article.style.display = '';
-              visibleCount++;
-            } else {
-              article.style.display = 'none';
-            }
-          });
-
-          const countLabel = document.querySelector('section p:first-child');
-          if (countLabel) {
-            countLabel.innerHTML = visibleCount + (visibleCount === 1 ? ' article' : ' articles') + ' found';
-          }
-        }
-
-        if (input) {
-          input.addEventListener('input', filterPosts);
-          input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') filterPosts();
-          });
-        }
-        if (btn) {
-          btn.addEventListener('click', filterPosts);
-        }
-      })();
-    </script>
-  </body>
-</html>
+                  <p class="text-sm md:text-base font-light text-gray-500 mt-3 leading-relaxed line-clamp-2 font-serif">
+                    {post.data.description}
+                  </p>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="text-lg text-gray-400 font-light font-serif">
+          {t("tags.noArticles")}
+        </p>
+      )}
+    </section>
+  </main>
+</BaseLayout>

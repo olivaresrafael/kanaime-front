@@ -1,6 +1,8 @@
 ---
 // Bio del autor al final del artículo
-import { getCollection } from "astro:content";
+import { getAuthors } from "../../utils/content";
+import { getImageSrc } from "../../utils/images";
+import { useTranslations } from "../../i18n/utils";
 
 interface Props {
   authorName: string;
@@ -8,22 +10,17 @@ interface Props {
 }
 
 const { authorName, lang = "es" } = Astro.props;
+const t = useTranslations(lang);
 const basePath = lang === "es" ? "" : "/en";
 
-const allAuthors = await getCollection("authors");
-// Buscar autor por nombre en la colección
+const allAuthors = await getAuthors();
 const author = allAuthors.find(
   (a) => a.data.name.toLowerCase() === (authorName || "").toLowerCase()
 );
 
-const authorPhotoSrc: string | undefined = author?.data.photo
-  ? typeof author.data.photo === "object"
-    ? author.data.photo.src
-    : author.data.photo
-  : undefined;
-
+const authorPhotoSrc = getImageSrc(author?.data.photo);
 const displayName = author?.data.name || authorName || "Kanaimé Editorial";
-const role = author?.data.role || "Autor";
+const role = author?.data.role || (lang === "es" ? "Autor" : "Author");
 const bio = author?.data.bio || "";
 const authorId = author?.id;
 ---
@@ -41,8 +38,8 @@ const authorId = author?.id;
       </div>
     )}
     <div class="flex-1">
-      <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">Escrito por</p>
-      <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Bebas Neue', sans-serif;">
+      <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">{t("post.writtenBy")}</p>
+      <h3 class="text-2xl md:text-3xl font-bold mb-3 font-bebas">
         {authorId ? (
           <a href={`${basePath}/autor/${authorId}/`} class="hover:text-[#A31621] transition-colors">
             {displayName}
@@ -53,18 +50,18 @@ const authorId = author?.id;
       </h3>
       {role && <p class="text-sm uppercase tracking-wider text-gray-400 mb-4">{role}</p>}
       {bio && (
-        <p class="text-lg font-light leading-relaxed text-gray-700" style="font-family: 'Source Serif 4', serif;">
+        <p class="text-lg font-light leading-relaxed text-gray-700 font-serif">
           {bio}
         </p>
       )}
       {authorId && (
         <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
           <a href={`${basePath}/autor/${authorId}/`} class="text-gray-400 hover:text-[#A31621] transition-colors">
-            Ver perfil
+            {t("post.viewProfile")}
           </a>
           {author?.data.social?.twitter && (
             <a href={author.data.social.twitter} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
-              Seguir
+              {t("post.follow")}
             </a>
           )}
         </div>
