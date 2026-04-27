@@ -10,7 +10,12 @@
   const PUBLIC_POSTHOG_PROJECT_TOKEN = "phc_n3rVbj7vReMKh3zJWPspoxzrRn4gJ54GsVWAFxPqZfbc";
   const PUBLIC_POSTHOG_HOST = "https://us.i.posthog.com";
 
-  if (typeof window !== "undefined" && PUBLIC_POSTHOG_PROJECT_TOKEN) {
+  if (
+    typeof window !== "undefined" &&
+    PUBLIC_POSTHOG_PROJECT_TOKEN &&
+    !window.location.hostname.includes("localhost") &&
+    !window.location.hostname.includes("127.0.0.1")
+  ) {
     posthog.init(PUBLIC_POSTHOG_PROJECT_TOKEN, {
       api_host: PUBLIC_POSTHOG_HOST,
       defaults: "2026-01-30",
