@@ -4,18 +4,18 @@ let posthogClient: PostHog | null = null;
 
 /**
  * Get the PostHog server-side client.
- * Uses a singleton pattern to avoid creating multiple clients.
+ * Accepts token and host explicitly to support Cloudflare runtime env vars.
  */
-export function getPostHogServer(): PostHog {
+export function getPostHogServer(
+  token: string,
+  host?: string
+): PostHog {
   if (!posthogClient) {
-    posthogClient = new PostHog(
-      import.meta.env.PUBLIC_POSTHOG_PROJECT_TOKEN || "",
-      {
-        host: import.meta.env.PUBLIC_POSTHOG_HOST,
-        flushAt: 1,
-        flushInterval: 0,
-      },
-    );
+    posthogClient = new PostHog(token, {
+      host: host || "https://us.i.posthog.com",
+      flushAt: 1,
+      flushInterval: 0,
+    });
   }
   return posthogClient;
 }
