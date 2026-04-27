@@ -16,7 +16,7 @@ export async function getStaticPaths() {
       .filter(
         (p) =>
           p.data.author?.toLowerCase() === author.data.name.toLowerCase() &&
-          p.data.lang === "es"
+          p.data.lang === "es",
       )
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
@@ -65,43 +65,77 @@ const photoSrc = getImageSrc(author.data.photo);
   </Fragment>
 
   <main class="w-full bg-white">
-    <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12">
+    <section
+      class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-16 md:pt-24 pb-12"
+    >
       <div class="flex flex-col md:flex-row items-start gap-10 md:gap-16">
-        {photoSrc && (
-          <div class="shrink-0 w-40 h-40 md:w-56 md:h-56 overflow-hidden bg-gray-100">
-            <SkeletonImageNatural
-              src={photoSrc}
-              alt={author.data.name}
-              class="w-full h-full"
-              minHeight="0"
-              imgClass="w-full h-full object-cover grayscale"
-            />
-          </div>
-        )}
+        {
+          photoSrc && (
+            <div class="shrink-0 w-40 h-40 md:w-56 md:h-56 overflow-hidden bg-gray-100">
+              <SkeletonImageNatural
+                src={photoSrc}
+                alt={author.data.name}
+                class="w-full h-full"
+                minHeight="0"
+                imgClass="w-full h-full object-cover grayscale"
+              />
+            </div>
+          )
+        }
         <div class="flex-1">
-          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-3">{author.data.role}</p>
-          <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 font-bebas">
+          <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-3">
+            {author.data.role}
+          </p>
+          <h1
+            class="text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 font-bebas"
+          >
             {author.data.name}
           </h1>
-          <p class="text-lg md:text-xl font-light text-gray-600 leading-relaxed max-w-2xl font-serif">
+          <p
+            class="text-lg md:text-xl font-light text-gray-600 leading-relaxed max-w-2xl font-serif"
+          >
             {author.data.bio}
           </p>
           <div class="mt-6 flex gap-6 text-xs uppercase tracking-widest">
-            {author.data.social?.website && (
-              <a href={author.data.social.website} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
-                Web
-              </a>
-            )}
-            {author.data.social?.twitter && (
-              <a href={author.data.social.twitter} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
-                Twitter
-              </a>
-            )}
-            {author.data.social?.instagram && (
-              <a href={author.data.social.instagram} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#A31621] transition-colors">
-                Instagram
-              </a>
-            )}
+            {
+              author.data.social?.website && (
+                <a
+                  href={author.data.social.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-gray-400 hover:text-[#A31621] transition-colors"
+                  onclick={`window.posthog?.capture('author_social_clicked', { author: '${author.data.name}', platform: 'website' })`}
+                >
+                  Web
+                </a>
+              )
+            }
+            {
+              author.data.social?.twitter && (
+                <a
+                  href={author.data.social.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-gray-400 hover:text-[#A31621] transition-colors"
+                  onclick={`window.posthog?.capture('author_social_clicked', { author: '${author.data.name}', platform: 'twitter' })`}
+                >
+                  Twitter
+                </a>
+              )
+            }
+            {
+              author.data.social?.instagram && (
+                <a
+                  href={author.data.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-gray-400 hover:text-[#A31621] transition-colors"
+                  onclick={`window.posthog?.capture('author_social_clicked', { author: '${author.data.name}', platform: 'instagram' })`}
+                >
+                  Instagram
+                </a>
+              )
+            }
           </div>
         </div>
       </div>
@@ -111,40 +145,43 @@ const photoSrc = getImageSrc(author.data.photo);
 
     <section class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-12 md:py-20">
       <p class="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8">
-        {posts.length} {posts.length === 1 ? "artículo" : "artículos"} publicados
+        {posts.length}
+        {posts.length === 1 ? "artículo" : "artículos"} publicados
       </p>
 
-      {posts.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-          {posts.map((post) => {
-            const imgSrc = getImageSrc(post.data.heroImage);
-            return (
-              <article>
-                <a href={`/blog/${post.id}/`} class="block group">
-                  {imgSrc && (
-                    <SkeletonImageNatural
-                      src={imgSrc}
-                      alt={post.data.title}
-                      class="mb-4 bg-gray-100"
-                      imgClass="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                    />
-                  )}
-                  <h3 class="text-xl md:text-2xl font-bold leading-tight group-hover:text-[#A31621] transition-colors font-bebas">
-                    {post.data.title}
-                  </h3>
-                  <p class="text-sm font-light text-gray-500 mt-2 line-clamp-2 font-serif">
-                    {post.data.description}
-                  </p>
-                </a>
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <p class="text-lg text-gray-400 font-light font-serif">
-          Este autor aún no tiene artículos publicados.
-        </p>
-      )}
+      {
+        posts.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            {posts.map((post) => {
+              const imgSrc = getImageSrc(post.data.heroImage);
+              return (
+                <article>
+                  <a href={`/blog/${post.id}/`} class="block group">
+                    {imgSrc && (
+                      <SkeletonImageNatural
+                        src={imgSrc}
+                        alt={post.data.title}
+                        class="mb-4 bg-gray-100"
+                        imgClass="w-full h-auto group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
+                    <h3 class="text-xl md:text-2xl font-bold leading-tight group-hover:text-[#A31621] transition-colors font-bebas">
+                      {post.data.title}
+                    </h3>
+                    <p class="text-sm font-light text-gray-500 mt-2 line-clamp-2 font-serif">
+                      {post.data.description}
+                    </p>
+                  </a>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="text-lg text-gray-400 font-light font-serif">
+            Este autor aún no tiene artículos publicados.
+          </p>
+        )
+      }
     </section>
   </main>
 </BaseLayout>

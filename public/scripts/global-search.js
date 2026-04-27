@@ -31,7 +31,10 @@
       const tags = article.dataset.tags || "";
 
       const matchesText =
-        !query || title.includes(query) || desc.includes(query) || author.includes(query);
+        !query ||
+        title.includes(query) ||
+        desc.includes(query) ||
+        author.includes(query);
       const matchesTag = !activeTag || tags.split(",").includes(activeTag);
 
       if (matchesText && matchesTag) {
@@ -47,8 +50,12 @@
       countLabel.textContent =
         visibleCount +
         (visibleCount === 1
-          ? (isEs ? " artículo" : " article")
-          : (isEs ? " artículos" : " articles"));
+          ? isEs
+            ? " artículo"
+            : " article"
+          : isEs
+            ? " artículos"
+            : " articles");
     }
 
     if (noResults) {
@@ -59,11 +66,29 @@
   if (input) {
     input.addEventListener("input", filterPosts);
     input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") filterPosts();
+      if (e.key === "Enter") {
+        const query = input.value.trim();
+        if (query) {
+          window.posthog?.capture("search_performed", {
+            query,
+            lang: document.documentElement.lang,
+          });
+        }
+        filterPosts();
+      }
     });
   }
   if (btn) {
-    btn.addEventListener("click", filterPosts);
+    btn.addEventListener("click", function () {
+      const query = input?.value.trim() || "";
+      if (query) {
+        window.posthog?.capture("search_performed", {
+          query,
+          lang: document.documentElement.lang,
+        });
+      }
+      filterPosts();
+    });
   }
 
   tagButtons.forEach(function (button) {
@@ -71,11 +96,24 @@
       activeTag = button.dataset.tag || "";
 
       tagButtons.forEach(function (b) {
-        b.classList.remove("border-[#A31621]", "text-[#A31621]", "bg-[#A31621]/5");
+        b.classList.remove(
+          "border-[#A31621]",
+          "text-[#A31621]",
+          "bg-[#A31621]/5",
+        );
         b.classList.add("border-gray-200", "text-gray-600");
       });
       button.classList.remove("border-gray-200", "text-gray-600");
-      button.classList.add("border-[#A31621]", "text-[#A31621]", "bg-[#A31621]/5");
+      button.classList.add(
+        "border-[#A31621]",
+        "text-[#A31621]",
+        "bg-[#A31621]/5",
+      );
+
+      window.posthog?.capture("search_tag_filtered", {
+        tag: activeTag || "all",
+        lang: document.documentElement.lang,
+      });
 
       filterPosts();
     });

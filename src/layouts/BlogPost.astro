@@ -49,14 +49,18 @@ const canonicalUrl =
   (slug
     ? new URL(`${basePath}/blog/${slug}/`, Astro.site).toString()
     : new URL(Astro.url.pathname, Astro.site).toString());
-const breadcrumbUrl = customCanonicalUrl || (slug ? `${basePath}/blog/${slug}/` : Astro.url.pathname);
+const breadcrumbUrl =
+  customCanonicalUrl ||
+  (slug ? `${basePath}/blog/${slug}/` : Astro.url.pathname);
 const primaryTag = tags?.[0];
 
 const allAuthors = await getAuthors();
 const authorEntry = author
   ? allAuthors.find((a) => a.data.name.toLowerCase() === author.toLowerCase())
   : undefined;
-const authorProfileUrl = authorEntry ? `${basePath}/autor/${authorEntry.id}/` : undefined;
+const authorProfileUrl = authorEntry
+  ? `${basePath}/autor/${authorEntry.id}/`
+  : undefined;
 
 const allPosts = await getCollection("blog");
 const langPosts = getPostsByLang(allPosts, lang);
@@ -134,7 +138,7 @@ const langPosts = getPostsByLang(allPosts, lang);
       .article-body :global(blockquote) {
         margin: 2em 0;
         padding-left: 1.5em;
-        border-left: 3px solid #A31621;
+        border-left: 3px solid #a31621;
         font-style: italic;
       }
       .article-body :global(a) {
@@ -143,7 +147,7 @@ const langPosts = getPostsByLang(allPosts, lang);
         transition: color 0.2s;
       }
       .article-body :global(a:hover) {
-        color: #A31621;
+        color: #a31621;
       }
       .article-body :global(img) {
         width: 100%;
@@ -162,7 +166,12 @@ const langPosts = getPostsByLang(allPosts, lang);
         margin-top: 0.75rem;
       }
       .skeleton-hero-pulse {
-        background: linear-gradient(90deg, #1f0507 0%, #3d0a0e 50%, #1f0507 100%);
+        background: linear-gradient(
+          90deg,
+          #1f0507 0%,
+          #3d0a0e 50%,
+          #1f0507 100%
+        );
         background-size: 200% 100%;
         animation: skeleton-shimmer 1.5s infinite;
         z-index: 1;
@@ -184,40 +193,52 @@ const langPosts = getPostsByLang(allPosts, lang);
         transition: opacity 0.3s ease;
       }
       @keyframes skeleton-shimmer {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
       }
     </style>
   </Fragment>
 
   <!-- HERO FULL-WIDTH -->
-  <header class="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] flex items-end overflow-hidden">
-    {heroSrc && (
-      <div class="absolute inset-0 z-0 skeleton-hero">
-        <img
-          src={heroSrc}
-          alt={title}
-          class="w-full h-full object-cover skeleton-hero-img"
-          loading="lazy"
-          onload="this.parentElement.classList.add('loaded')"
-          onerror="this.parentElement.classList.add('error')"
-          itemprop="image"
-        />
-        <div class="skeleton-hero-pulse absolute inset-0"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-      </div>
-    )}
+  <header
+    class="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9] flex items-end overflow-hidden"
+  >
+    {
+      heroSrc && (
+        <div class="absolute inset-0 z-0 skeleton-hero">
+          <img
+            src={heroSrc}
+            alt={title}
+            class="w-full h-full object-cover skeleton-hero-img"
+            loading="lazy"
+            onload="this.parentElement.classList.add('loaded')"
+            onerror="this.parentElement.classList.add('error')"
+            itemprop="image"
+          />
+          <div class="skeleton-hero-pulse absolute inset-0" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        </div>
+      )
+    }
 
-    <div class="relative z-10 w-full px-6 md:px-12 lg:px-20 pb-12 md:pb-20 pt-32">
+    <div
+      class="relative z-10 w-full px-6 md:px-12 lg:px-20 pb-12 md:pb-20 pt-32"
+    >
       <div class="max-w-5xl">
-        {primaryTag && (
-          <a
-            href={`${basePath}/tags/${slugify(primaryTag)}/`}
-            class="inline-block text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/70 mb-4 hover:text-white transition-colors"
-          >
-            {primaryTag}
-          </a>
-        )}
+        {
+          primaryTag && (
+            <a
+              href={`${basePath}/tags/${slugify(primaryTag)}/`}
+              class="inline-block text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/70 mb-4 hover:text-white transition-colors"
+            >
+              {primaryTag}
+            </a>
+          )
+        }
 
         <h1
           class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[0.95] mb-6 font-bebas"
@@ -226,34 +247,56 @@ const langPosts = getPostsByLang(allPosts, lang);
           {title}
         </h1>
 
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm text-white/80">
-          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-            {authorProfileUrl ? (
-              <a href={authorProfileUrl} class="hover:text-white transition-colors" itemprop="name">
-                {author}
-              </a>
-            ) : (
-              <span itemprop="name">{author || "Kanaimé Editorial"}</span>
-            )}
+        <div
+          class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs md:text-sm text-white/80"
+        >
+          <span
+            itemprop="author"
+            itemscope
+            itemtype="https://schema.org/Person"
+          >
+            {
+              authorProfileUrl ? (
+                <a
+                  href={authorProfileUrl}
+                  class="hover:text-white transition-colors"
+                  itemprop="name"
+                >
+                  {author}
+                </a>
+              ) : (
+                <span itemprop="name">{author || "Kanaimé Editorial"}</span>
+              )
+            }
           </span>
           <span class="hidden md:inline text-white/40">|</span>
           <time datetime={pubDate.toISOString()} itemprop="datePublished">
             <FormattedDate date={pubDate} lang={lang} includeTime />
           </time>
-          {updatedDate && (
-            <>
-              <span class="hidden md:inline text-white/40">|</span>
-              <time datetime={updatedDate.toISOString()} itemprop="dateModified">
-                {t("post.updated")} <FormattedDate date={updatedDate} lang={lang} includeTime />
-              </time>
-            </>
-          )}
-          {typeof readingTimeMinutes === "number" && (
-            <>
-              <span class="hidden md:inline text-white/40">|</span>
-              <span class="text-xs uppercase tracking-[0.2em] text-white/70">{readingTimeMinutes} {t("post.readingTime")}</span>
-            </>
-          )}
+          {
+            updatedDate && (
+              <>
+                <span class="hidden md:inline text-white/40">|</span>
+                <time
+                  datetime={updatedDate.toISOString()}
+                  itemprop="dateModified"
+                >
+                  {t("post.updated")}{" "}
+                  <FormattedDate date={updatedDate} lang={lang} includeTime />
+                </time>
+              </>
+            )
+          }
+          {
+            typeof readingTimeMinutes === "number" && (
+              <>
+                <span class="hidden md:inline text-white/40">|</span>
+                <span class="text-xs uppercase tracking-[0.2em] text-white/70">
+                  {readingTimeMinutes} {t("post.readingTime")}
+                </span>
+              </>
+            )
+          }
         </div>
       </div>
     </div>
@@ -271,25 +314,33 @@ const langPosts = getPostsByLang(allPosts, lang);
             {description}
           </p>
 
-          <div class="article-body text-lg md:text-xl font-light text-gray-800" itemprop="articleBody">
+          <div
+            class="article-body text-lg md:text-xl font-light text-gray-800"
+            itemprop="articleBody"
+          >
             <slot />
           </div>
 
-          {tags && tags.length > 0 && (
-            <div class="mt-16 pt-8 border-t border-gray-100">
-              <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">{t("post.tags")}</p>
-              <div class="flex flex-wrap gap-3">
-                {tags.map((tag) => (
-                  <a
-                    href={`${basePath}/tags/${slugify(tag)}/`}
-                    class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
-                  >
-                    {tag}
-                  </a>
-                ))}
+          {
+            tags && tags.length > 0 && (
+              <div class="mt-16 pt-8 border-t border-gray-100">
+                <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-4">
+                  {t("post.tags")}
+                </p>
+                <div class="flex flex-wrap gap-3">
+                  {tags.map((tag) => (
+                    <a
+                      href={`${basePath}/tags/${slugify(tag)}/`}
+                      class="px-4 py-2 border border-gray-200 text-xs uppercase tracking-wider text-gray-600 hover:border-[#A31621] hover:text-[#A31621] transition-colors"
+                      onclick={`window.posthog?.capture('article_tag_clicked', { tag: '${tag}', article_slug: '${slug}', lang: '${lang}' })`}
+                    >
+                      {tag}
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }
 
           <AuthorBio authorName={author || "Kanaimé Editorial"} lang={lang} />
         </article>
@@ -297,7 +348,15 @@ const langPosts = getPostsByLang(allPosts, lang);
         <Sidebar
           lang={lang}
           mode="detail"
-          widgets={["authors", "related", "recent", "tags", "featured", "random", "archive"]}
+          widgets={[
+            "authors",
+            "related",
+            "recent",
+            "tags",
+            "featured",
+            "random",
+            "archive",
+          ]}
           posts={langPosts}
           currentPostId={slug}
           currentTags={tags}

@@ -11,10 +11,14 @@ const t = useTranslations(lang);
 
 <div class="my-16 md:my-24">
   <div class="bg-[#1a1a1a] p-8 md:p-12 lg:p-16 text-center">
-    <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 font-bebas">
+    <h3
+      class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 font-bebas"
+    >
       {t("newsletter.title")}
     </h3>
-    <p class="text-base md:text-lg font-light text-white/70 max-w-xl mx-auto mb-8 leading-relaxed font-serif">
+    <p
+      class="text-base md:text-lg font-light text-white/70 max-w-xl mx-auto mb-8 leading-relaxed font-serif"
+    >
       {t("newsletter.subtitle")}
     </p>
 
@@ -51,7 +55,11 @@ const t = useTranslations(lang);
       id="newsletter-error"
       class="mt-4 text-sm text-red-400 hidden font-serif"
     >
-      {lang === "es" ? "Error. Intenta de nuevo más tarde." : "Error. Please try again later."}
+      {
+        lang === "es"
+          ? "Error. Intenta de nuevo más tarde."
+          : "Error. Please try again later."
+      }
     </p>
   </div>
 </div>

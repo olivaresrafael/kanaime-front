@@ -27,9 +27,20 @@
     errorMsg?.classList.add("hidden");
 
     try {
+      const sessionId = window.posthog?.get_session_id?.() || "";
+      const distinctId = window.posthog?.get_distinct_id?.() || "";
+
+      window.posthog?.capture("newsletter_form_submitted", {
+        lang: document.documentElement.lang,
+      });
+
       const res = await fetch("/api/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-PostHog-Session-Id": sessionId,
+          "X-PostHog-Distinct-Id": distinctId,
+        },
         body: JSON.stringify({
           email,
           lang: document.documentElement.lang,

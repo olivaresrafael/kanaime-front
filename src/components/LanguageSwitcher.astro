@@ -30,22 +30,27 @@ if (blogMatch) {
   const posts = await getCollection("blog");
 
   // Find current post
-  const currentPost = posts.find((p) => p.id === currentSlug && p.data.lang === lang);
+  const currentPost = posts.find(
+    (p) => p.id === currentSlug && p.data.lang === lang,
+  );
 
   if (currentPost?.data.translationOf) {
     // Current post has a translationOf field → use that slug
-    otherPath = otherLocale === "es"
-      ? `/blog/${currentPost.data.translationOf}/`
-      : `/en/blog/${currentPost.data.translationOf}/`;
+    otherPath =
+      otherLocale === "es"
+        ? `/blog/${currentPost.data.translationOf}/`
+        : `/en/blog/${currentPost.data.translationOf}/`;
   } else {
     // Look for a post in the other language that points to this one
     const otherPost = posts.find(
-      (p) => p.data.lang === otherLocale && p.data.translationOf === currentSlug
+      (p) =>
+        p.data.lang === otherLocale && p.data.translationOf === currentSlug,
     );
     if (otherPost) {
-      otherPath = otherLocale === "es"
-        ? `/blog/${otherPost.id}/`
-        : `/en/blog/${otherPost.id}/`;
+      otherPath =
+        otherLocale === "es"
+          ? `/blog/${otherPost.id}/`
+          : `/en/blog/${otherPost.id}/`;
     }
   }
 }
@@ -59,38 +64,55 @@ if (tagMatch) {
   let otherTagSlug = map[currentTagSlug];
   if (!otherTagSlug) {
     const entry = Object.entries(map).find(
-      ([key]) => key.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === currentTagSlug
+      ([key]) =>
+        key.normalize("NFD").replace(/[\u0300-\u036f]/g, "") === currentTagSlug,
     );
     otherTagSlug = entry?.[1];
   }
   const targetSlug = slugify(otherTagSlug || currentTagSlug);
-  otherPath = otherLocale === "es"
-    ? `/tags/${targetSlug}/`
-    : `/en/tags/${targetSlug}/`;
+  otherPath =
+    otherLocale === "es" ? `/tags/${targetSlug}/` : `/en/tags/${targetSlug}/`;
 }
 
 // For author pages, keep the same slug (authors are shared)
 const authorMatch = currentPath.match(/^\/(?:en\/)?autor\/([^/]+)\/?$/);
 if (authorMatch) {
-  otherPath = otherLocale === "es"
-    ? `/autor/${authorMatch[1]}/`
-    : `/en/autor/${authorMatch[1]}/`;
+  otherPath =
+    otherLocale === "es"
+      ? `/autor/${authorMatch[1]}/`
+      : `/en/autor/${authorMatch[1]}/`;
 }
 ---
 
-<div class="language-switcher flex items-center gap-2 text-xs uppercase tracking-wider">
+<div
+  class="language-switcher flex items-center gap-2 text-xs uppercase tracking-wider"
+>
   <a
     href={lang === "es" ? currentPath : otherPath}
-    class={lang === "es" ? "text-[#A31621] font-bold" : "text-gray-400 hover:text-[#A31621] transition-colors"}
+    class={lang === "es"
+      ? "text-[#A31621] font-bold"
+      : "text-gray-400 hover:text-[#A31621] transition-colors"}
     aria-label="Cambiar a español"
+    onclick={lang !== "es"
+      ? "window.posthog?.capture('language_switched', { from: '" +
+        lang +
+        "', to: 'es' })"
+      : undefined}
   >
     ES
   </a>
   <span class="text-gray-300">|</span>
   <a
     href={lang === "en" ? currentPath : otherPath}
-    class={lang === "en" ? "text-[#A31621] font-bold" : "text-gray-400 hover:text-[#A31621] transition-colors"}
+    class={lang === "en"
+      ? "text-[#A31621] font-bold"
+      : "text-gray-400 hover:text-[#A31621] transition-colors"}
     aria-label="Switch to English"
+    onclick={lang !== "en"
+      ? "window.posthog?.capture('language_switched', { from: '" +
+        lang +
+        "', to: 'en' })"
+      : undefined}
   >
     EN
   </a>

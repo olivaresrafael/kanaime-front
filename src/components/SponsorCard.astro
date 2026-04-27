@@ -2,43 +2,64 @@
 const { name, description, url, category } = Astro.props;
 ---
 
-<div class="group border border-gray-200 p-8 hover:border-black transition-colors duration-300">
-  <div class="h-32 flex items-center justify-center mb-6 bg-gray-50 group-hover:bg-white transition-colors">
-    {url ? (
-      <a href={url} target="_blank" rel="noopener noreferrer" class="text-4xl font-bold bebas-neue-regular tracking-wider">
-        {name}
+<div
+  class="group border border-gray-200 p-8 hover:border-black transition-colors duration-300"
+>
+  <div
+    class="h-32 flex items-center justify-center mb-6 bg-gray-50 group-hover:bg-white transition-colors"
+  >
+    {
+      url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-4xl font-bold bebas-neue-regular tracking-wider"
+        >
+          {name}
+        </a>
+      ) : (
+        <span class="text-4xl font-bold bebas-neue-regular tracking-wider text-gray-300">
+          {name}
+        </span>
+      )
+    }
+  </div>
+
+  {
+    category && (
+      <span class="inline-block text-xs uppercase tracking-widest text-gray-400 mb-3">
+        {category}
+      </span>
+    )
+  }
+
+  {
+    description && (
+      <p class="text-lg font-light text-gray-700 source-serif-4-font leading-relaxed">
+        {description}
+      </p>
+    )
+  }
+
+  {
+    url ? (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block mt-6 text-sm uppercase tracking-widest border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors"
+        data-sponsor-name={name}
+        data-sponsor-url={url}
+        data-sponsor-category={category}
+        onclick="window.posthog?.capture('sponsor_link_clicked', { sponsor_name: this.dataset.sponsorName, sponsor_url: this.dataset.sponsorUrl, sponsor_category: this.dataset.sponsorCategory })"
+      >
+        Visitar sitio
       </a>
     ) : (
-      <span class="text-4xl font-bold bebas-neue-regular tracking-wider text-gray-300">
-        {name}
+      <span class="inline-block mt-6 text-sm uppercase tracking-widest text-gray-300 border-b border-gray-200 pb-1">
+        Próximamente
       </span>
-    )}
-  </div>
-  
-  {category && (
-    <span class="inline-block text-xs uppercase tracking-widest text-gray-400 mb-3">
-      {category}
-    </span>
-  )}
-  
-  {description && (
-    <p class="text-lg font-light text-gray-700 source-serif-4-font leading-relaxed">
-      {description}
-    </p>
-  )}
-  
-  {url ? (
-    <a 
-      href={url} 
-      target="_blank" 
-      rel="noopener noreferrer"
-      class="inline-block mt-6 text-sm uppercase tracking-widest border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors"
-    >
-      Visitar sitio
-    </a>
-  ) : (
-    <span class="inline-block mt-6 text-sm uppercase tracking-widest text-gray-300 border-b border-gray-200 pb-1">
-      Próximamente
-    </span>
-  )}
+    )
+  }
 </div>
