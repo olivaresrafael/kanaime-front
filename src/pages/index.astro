@@ -36,6 +36,7 @@ const featuredImageSrc = getImageSrc(featuredPost?.data.heroImage);
         name: SITE_TITLE,
         description: SITE_DESCRIPTION,
         url: `${Astro.site}/`,
+        searchUrl: `${Astro.site}/search/?q={search_term_string}`,
       }}
     />
     <SchemaOrg

@@ -21,6 +21,7 @@ interface WebsiteSchema {
   name: string;
   description: string;
   url: string;
+  searchUrl?: string;
 }
 
 interface BreadcrumbSchema {
@@ -83,6 +84,18 @@ if (schema.type === "article") {
         url: new URL("/favicon.svg", Astro.site).toString(),
       },
     },
+    ...(schema.searchUrl
+      ? {
+          potentialAction: {
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: schema.searchUrl,
+            },
+            "query-input": "required name=search_term_string",
+          },
+        }
+      : {}),
   };
 } else if (schema.type === "breadcrumb") {
   jsonLd = {

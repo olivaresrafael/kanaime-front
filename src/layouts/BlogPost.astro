@@ -76,6 +76,7 @@ const langPosts = getPostsByLang(allPosts, lang);
     modifiedTime: updatedDate,
     author: author || "Kanaimé Editorial",
     tags: tags || [],
+    section: tags?.[0],
   }}
   lang={lang}
   alternates={alternates}

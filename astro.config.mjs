@@ -11,7 +11,7 @@ import markdoc from '@astrojs/markdoc';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://kanaime.com',
+  site: 'https://kanaime.org',
   output: 'static',
   integrations: [mdx(), sitemap(), markdoc()],
   adapter: cloudflare(),
