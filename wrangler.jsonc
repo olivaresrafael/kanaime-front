@@ -3,15 +3,15 @@
   "routes": [
     {
       "pattern": "kanaime.org",
-      "custom_domain": true
+      "custom_domain": true,
     },
     {
-      "pattern": "www.kanaime.org",
-      "custom_domain": true
+      "pattern": "kanaime-front.olivaresrafael9736.workers.dev",
+      "custom_domain": false,
     },
     {
-      "pattern": "*-dev.kanaime.org",
-      "custom_domain": true
-    }
-  ]
+      "pattern": "*-kanaime-front.olivaresrafael9736.workers.dev",
+      "custom_domain": false,
+    },
+  ],
 }
