@@ -1,8 +1,17 @@
 {
+  "compatibility_date": "2026-04-27",
   "routes": [
     {
       "pattern": "kanaime.org",
       "custom_domain": true,
+    },
+    {
+      "pattern": "kanaime-front.olivaresrafael9736.workers.dev",
+      "custom_domain": false,
+    },
+    {
+      "pattern": "*-kanaime-front.olivaresrafael9736.workers.dev",
+      "custom_domain": false,
     },
   ],
 }
