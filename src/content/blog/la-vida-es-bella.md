@@ -1,7 +1,7 @@
 ---
 title: "La Vida es Bella"
 description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat."
-pubDate: "2024-07-15T12:00:00"
+pubDate: "2024-06-20T10:00:00"
 heroImage: "../../assets/blog-placeholder-4.jpg"
 author: "Rafael Olivares"
 tags: ["cultura"]
